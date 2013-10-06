@@ -26,14 +26,14 @@
 	nuts[TALKNUT] = {"nut":"talknut", "img":"talknut.jpg"};
 	nuts[FAVNUT] = {"nut":"favnut", "img":"delicious-icon.png"};
 	nuts[PHOTONUT] = {"nut":"photonut", "img":"flickr_logo.png"};
-	nuts[WISHNUT] = 'wishnut';
+	nuts[WISHNUT] = {"nut":"wishnut", "img": "wishnut.jpeg"};
 	nuts[PROJECTNUT] = {"nut":"projectnut", "img":"debian.png"};
 	nuts[MEDIANUT] = {"nut": "medianut", "img":"netflix-icon.png"};
-	nuts[ANALNUT] = 'analnut';
+	nuts[ANALNUT] = {"nut":"analnut", "img":"Thing1thing2.jpg"};
 	nuts[VIDINUT] = {"nut":"vidinut", "img":"vidinut.jpeg"};
-	nuts[AUDINUT] = 'audinut';
+	nuts[AUDINUT] = {"nut":"audinut", "img":"headphones.jpg"};
 	nuts[BUDNUT] = {"nut":"budnut", "img":"Facebook-Icon.png"};
-	nuts[MAPNUT] = 'mapnut';
+	nuts[MAPNUT] = {"nut":"mapnut", "img":"mapnut.jpeg"};
 
 	function htmlEncode(value) {
 		if (value) {
@@ -68,7 +68,7 @@
 				$.each(json,
 					function(i, item) {
 						console.log('i:' + i + ', item.nut_id: ' + item.nut_id + ' item.title:' + item.title);
-						if(item.nut_id == PHOTONUT || item.nut_id == BUDNUT){
+						if(item.nut_id == PHOTONUT || item.nut_id == BUDNUT || item.nut_id == AUDINUT){
 							content = '';
 						} else {
 							content = htmlDecode(item.content);
@@ -123,13 +123,16 @@
 </script>
 </head>
 <body>
-  <div id="myCarousel" class="carousel slide">
+  <header class="header">
+    <div  style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+  </header>
+  <!-- <div id="myCarousel" class="carousel slide">
     <ol class="carousel-indicators">
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
       <li data-target="#myCarousel" data-slide-to="1"></li>
       <li data-target="#myCarousel" data-slide-to="2"></li>
     </ol>
-    <!-- Carousel items -->
+    Carousel items
     <div class="carousel-inner">
       <div class="active item">
         <img src="img/attack.jpg" />
@@ -141,11 +144,11 @@
         <img src="img/panda.jpg" />
       </div>
     </div>
-    <!-- Carousel nav -->
+    Carousel nav
     <a class="carousel-control left" href="#myCarousel"
       data-slide="prev">&lsaquo;</a> <a class="carousel-control right"
       href="#myCarousel" data-slide="next">&rsaquo;</a>
-  </div>
+  </div> -->
   <div class="container-fluid" id="splayshdb"></div>
   <footer class="footer">
     <div  style="text-align: center; padding: 30px 0; margin-top: 70px; border-top: 1px solid #e5e5e5; background-color: #f5f5f5;">splaysh</div>
