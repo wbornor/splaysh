@@ -19,7 +19,8 @@
     var AUDINUT = 10;
     var BUDNUT = 12;
     var MAPNUT = 13;
-	var IMGROOT = "file:///Users/211016759/Documents/git/splaysh/web/img/";
+	//var IMGROOT = "file:///Users/211016759/Documents/git/splaysh/web/img/";
+	var IMGROOT = "img/";
 	var LEFT = 0;
 	
 	var nuts = new Array();
@@ -57,7 +58,7 @@
 
 	$(document).ready(function() {
 		var items = [];
-		$.getJSON("http://splaysh.com/test.txt") //smalltest.js
+		$.getJSON("http://splaysh.com/splayshdb-all.json") 
 			.done(function(json) {
 				var d = json;
 				var content = '';
