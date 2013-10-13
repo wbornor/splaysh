@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
 <title>splaysh</title>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -91,7 +92,7 @@
 						
 						//block += '<div class="span6">';
 						block += '<div class="media" id="' + i + '">';
-						block += '<a class="pull-' + pull + '" href="#"><img class="media-object" src="' + IMGROOT + nuts[item.nut_id].img + '" width="80"></a>'
+						block += '<a class="pull-' + pull + '" href="#"><img class="media-object hidden-phone" src="' + IMGROOT + nuts[item.nut_id].img + '" width="80"></a>'
 						if ( pull == 'left' ){
 							block += '<div class="media-body text-left">';	
 						} else {
@@ -125,7 +126,9 @@
 </head>
 <body>
   <header class="header">
-    <div  style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+    <div  class="hidden-phone hidden-tablet visible-desktop" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+    <div  class="hidden-phone hidden-desktop visable-tablet" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red-small.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+    <div  class="hidden-tablet hidden-desktop visable-phone" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red-small.jpg'); background-repeat:no-repeat; background-position: center;"></div>
   </header>
   <!-- <div id="myCarousel" class="carousel slide">
     <ol class="carousel-indicators">
