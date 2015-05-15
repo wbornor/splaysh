@@ -91,10 +91,35 @@
 
     function enrichUserMentions(content, mentions) {
         if (mentions) {
+
             for (var i = 0; i < mentions.length; i++) {
                 var screenName = mentions[i].screen_name
                 var link = "<a href='https://twitter.com/" + screenName + "'>@" + screenName + "</a>"
                 content = content.replace('@' + screenName, link)
+            }
+        }
+
+        return content
+    }
+
+    function enrichUrls(content, urls) {
+        if (urls) {
+        	for (var i = 0; i < urls.length; i++) {       	
+        		var url = urls[i]
+                var html = "<a href='" + url.url + "'>" + url.url + "</a>"
+                content = content.replace(url.url, html)
+        	}
+        }
+
+        return content
+    }
+
+    function enrichHashTags(content, hashtags) {
+        if (hashtags) {
+            for (var i = 0; i < hashtags.length; i++) {         
+                var hashtag = hashtags[i]
+                var html = "<a href='https://www.twitter.com/hashtag/" + hashtag.text + "'>#" + hashtag.text + "</a>"
+                content = content.replace('#'+hashtag.text, html)
             }
         }
 
@@ -142,14 +167,29 @@
 
             block += '<div class="media-heading"><h4><a href="' + item.url + '">' + item.title + '</a></h4></div>';
             content = enrichUserMentions(content, item['tweet::entities::user_mentions']);
+            content = enrichUrls(content, item['tweet::entities::urls']);
+            content = enrichHashTags(content, item['tweet::entities::hashtags']);
+
+            if (item["tweet::entities::media"]) {
+                for (media in item["tweet::entities::media"]) {
+                    var url = item["tweet::entities::media"][media].url
+                    if (url) {
+                        var html = "<a href='" + url + "'>" + url + "</a>"
+                        content = content.replace(url, html)
+                    }
+                }   
+            }
+
             block += '<p>' + content + '</p>';
+
+            //TALKNUT::TWITTER
             if (item["tweet::entities::media"]) {
                 for (media in item["tweet::entities::media"]) {
                     if (item["tweet::entities::media"][media]["type"] == "photo") {
                         block += '<p><img class="media-object" src="' +
                             item["tweet::entities::media"][media]["media_url_https"] +
                             '"/></p>';
-                    }
+                    }  
                 }
             }
 
