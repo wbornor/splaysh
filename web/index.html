@@ -186,9 +186,12 @@
             if (item["tweet::entities::media"]) {
                 for (media in item["tweet::entities::media"]) {
                     if (item["tweet::entities::media"][media]["type"] == "photo") {
-                        block += '<p><img class="media-object" src="' +
+                        var url = item["tweet::entities::media"][media].url
+                        block += '<p><a href="' + url + '"">'
+                        block += '<img class="media-object" src="' +
                             item["tweet::entities::media"][media]["media_url_https"] +
                             '"/></p>';
+                        block += '</a></p>'
                     }  
                 }
             }
