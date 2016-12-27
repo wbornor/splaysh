@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <title>splaysh</title>
+    <script src="https://fb.me/react-0.14.7.min.js"
+            integrity="sha384-zTm/dblzLXQNp3CgY+hfaC/WJ6h4XtNrePh2CW2+rO9GPuNiPb9jmthvAL+oI/dQ"
+            crossorigin="anonymous"></script>
+    <script src="https://fb.me/react-dom-0.14.7.min.js"
+            integrity="sha384-ntqCsHbLdMxT352UbhPbT7fqjE8xi4jLmQYQa8mYR+ylAapbXRfdsDweueDObf7m"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var TALKNUT = 1;
+        var FAVNUT = 2;
+        var PHOTONUT = 3;
+        var WISHNUT = 4;
+        var PROJECTNUT = 7;
+        var MEDIANUT = 6;
+        var ANALNUT = 8;
+        var VIDINUT = 9;
+        var AUDINUT = 10;
+        var BUDNUT = 12;
+        var MAPNUT = 13;
+        var IMGROOT = "img/";
+        var LEFT = 0;
+
+        var nuts = new Array();
+        nuts[TALKNUT] = {
+            "nut": "talknut",
+            "img": "talknut.jpg"
+        };
+        nuts[FAVNUT] = {
+            "nut": "favnut",
+            "img": "delicious-icon.png"
+        };
+        nuts[PHOTONUT] = {
+            "nut": "photonut",
+            "img": "flickr_logo.png"
+        };
+        nuts[WISHNUT] = {
+            "nut": "wishnut",
+            "img": "wishnut.jpeg"
+        };
+        nuts[PROJECTNUT] = {
+            "nut": "projectnut",
+            "img": "debian.png"
+        };
+        nuts[MEDIANUT] = {
+            "nut": "medianut",
+            "img": "netflix-icon.png"
+        };
+        nuts[ANALNUT] = {
+            "nut": "analnut",
+            "img": "Thing1thing2.jpg"
+        };
+        nuts[VIDINUT] = {
+            "nut": "vidinut",
+            "img": "vidinut.jpeg"
+        };
+        nuts[AUDINUT] = {
+            "nut": "audinut",
+            "img": "headphones.jpg"
+        };
+        nuts[BUDNUT] = {
+            "nut": "budnut",
+            "img": "Facebook-Icon.png"
+        };
+        nuts[MAPNUT] = {
+            "nut": "mapnut",
+            "img": "mapnut.jpeg"
+        };
+
+        function htmlEncode(value) {
+            if (value) {
+                return jQuery('<div/>').text(value).html();
+            } else {
+                return '';
+            }
+        }
+
+        function htmlDecode(value) {
+            if (value) {
+                return jQuery('<div/>').html(value).text();
+            } else {
+                return '';
+            }
+        }
+
+        function isOdd(num) {
+            return num % 2;
+        }
+
+        function enrichUserMentions(content, mentions) {
+            if (mentions) {
+
+                for (var i = 0; i < mentions.length; i++) {
+                    var screenName = mentions[i].screen_name
+                    var link = "<a href='https://twitter.com/" + screenName + "'>@" + screenName + "</a>"
+                    content = content.replace('@' + screenName, link)
+                }
+            }
+
+            return content
+        }
+
+        function enrichUrls(content, urls) {
+            if (urls) {
+                for (var i = 0; i < urls.length; i++) {
+                    var url = urls[i]
+                    var html = "<a href='" + url.url + "'>" + url.url + "</a>"
+                    content = content.replace(url.url, html)
+                }
+            }
+
+            return content
+        }
+
+        function enrichHashTags(content, hashtags) {
+            if (hashtags) {
+                for (var i = 0; i < hashtags.length; i++) {
+                    var hashtag = hashtags[i]
+                    var html = "<a href='https://www.twitter.com/hashtag/" + hashtag.text + "'>#" + hashtag.text + "</a>"
+                    content = content.replace('#'+hashtag.text, html)
+                }
+            }
+
+            return content
+        }
+
+        function renderEntry(json) {
+            var d = json;
+            var items = [];
+            var content = '';
+            var block = '';
+            var pull = '';
+
+            //console.log("JSON Data: " + json);
+            $.each(json, function(i, item) {
+                console.log('i:' + i + ', item.nut_id: ' + item.nut_id + ' item.title:' + item.title);
+                if (item.nut_id == PHOTONUT || item.nut_id == BUDNUT || item.nut_id == AUDINUT) {
+                    content = '';
+                } else {
+                    content = htmlDecode(item.content);
+                }
+
+                block = '';
+                if (!isOdd(i)) {
+                    pull = 'right';
+                    block += '<div class="row-fluid" id="' + i + '">';
+                } else {
+                    pull = 'left';
+                }
+
+                if (item.nut_id == VIDINUT) {
+                    block += '<div class="span6">';
+                } else {
+                    block += '<div class="span6">';
+                }
+
+                //block += '<div class="span6">';
+                block += '<div class="media" id="' + i + '">';
+                block += '<a class="pull-' + pull + '" href="#"><img class="media-object hidden-phone" src="' + IMGROOT + nuts[item.nut_id].img + '" width="80"></a>'
+                if (pull == 'left') {
+                    block += '<div class="media-body text-left">';
+                } else {
+                    block += '<div class="media-body text-right">';
+                }
+
+                block += '<div class="media-heading"><h4><a href="' + item.url + '">' + item.title + '</a></h4></div>';
+                content = enrichUserMentions(content, item['tweet::entities::user_mentions']);
+                content = enrichUrls(content, item['tweet::entities::urls']);
+                content = enrichHashTags(content, item['tweet::entities::hashtags']);
+
+                if (item["tweet::entities::media"]) {
+                    for (media in item["tweet::entities::media"]) {
+                        var url = item["tweet::entities::media"][media].url
+                        if (url) {
+                            var html = "<a href='" + url + "'>" + url + "</a>"
+                            content = content.replace(url, html)
+                        }
+                    }
+                }
+
+                block += '<p>' + content + '</p>';
+
+                //TALKNUT::TWITTER
+                if (item["tweet::entities::media"]) {
+                    for (media in item["tweet::entities::media"]) {
+                        if (item["tweet::entities::media"][media]["type"] == "photo") {
+                            var url = item["tweet::entities::media"][media].url
+                            block += '<p><a href="' + url + '"">'
+                            block += '<img class="media-object" src="' +
+                                    item["tweet::entities::media"][media]["media_url_https"] +
+                                    '"/></p>';
+                            block += '</a></p>'
+                        }
+                    }
+                }
+
+
+                block += '</div>';
+                block += '</div>';
+                block += '</div>';
+                if (isOdd(i)) {
+                    block += '</div>';
+                }
+                items.push(block);
+            });
+            return items;
+        }
+        $(document).ready(function() {
+            var items = [];
+            //$.getJSON("http://splaysh.com/splayshdb-all.json")
+            $.getJSON("http://splaysh.com/talknut/head.json")
+                    .done(function(json) {
+                        items = renderEntry(json)
+                    }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ', ' + error;
+                console.log("Request Failed: " + err);
+            }).always(function() {
+                $('<div/>', {
+                    'class': 'container-fluid',
+                    html: items.join('')
+                }).appendTo('#splayshdb');
+            });
+        });
+    </script>
+    <script type="text/babel">
+        var HelloWorld = React.createClass({
+            render: function() {
+                return (
+                <p>
+                Hello, <input type="text" placeholder="Your name here" />!
+                                It is {this.props.date.toTimeString()}
+                </p>
+                );
+            }
+        });
+
+        ReactDOM.render(
+            <HelloWorld date={new Date()} />,
+                document.getElementById('splayshdb')
+        );
+    </script>
+</head>
+<body>
+<header class="header">
+    <div  class="hidden-phone hidden-tablet visible-desktop" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+    <div  class="hidden-phone hidden-desktop visable-tablet" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red-small.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+    <div  class="hidden-tablet hidden-desktop visable-phone" style="text-align: center; padding: 0px 0 145px 0; margin-top: 0px; border-top: 1px solid #e5e5e5; background-color: #FFFFFF; background-image:url('img/dab-red-small.jpg'); background-repeat:no-repeat; background-position: center;"></div>
+</header>
+<div class="container-fluid" id="splayshdb"></div>
+<footer class="footer">
+    <div  style="text-align: center; padding: 30px 0; margin-top: 70px; border-top: 1px solid #e5e5e5; background-color: #f5f5f5;">splaysh</div>
+</footer>
+</body>
+</html>

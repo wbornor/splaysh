@@ -1,2 +1,4 @@
 splayshdb/
 *.json
+*.min.js
+*.iml
