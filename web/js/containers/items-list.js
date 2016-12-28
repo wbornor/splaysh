@@ -16,24 +16,22 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        console.log('props: ' + JSON.stringify(this.props));
-        const {fetchPosts, selectedSubreddit} = this.props;
-        fetchPosts(selectedSubreddit || 'reactjs');
+        const {fetchPosts, activeNut} = this.props;
+        fetchPosts && fetchPosts(activeNut || 'reactjs');
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('props: ' + JSON.stringify(this.props));
-        if (nextProps.selectedSubreddit !== this.props.selectedSubreddit) {
-            const {fetchPosts, selectedSubreddit} = nextProps;
-            fetchPosts(selectedSubreddit || 'reactjs');
+        if (nextProps.activeNut !== this.props.activeNut) {
+            const {fetchPosts, activeNut} = nextProps;
+            fetchPosts && fetchPosts(activeNut || 'reactjs');
         }
     }
 
     handleRefreshClick(e) {
         e.preventDefault();
 
-        const { fetchPosts, selectedSubreddit } = this.props;
-        fetchPosts(selectedSubreddit || 'reactjs');
+        const {fetchPosts, activeNut} = this.props;
+        fetchPosts(activeNut || 'reactjs');
     }
 
     // handleChange(nextSubreddit) {
@@ -43,13 +41,19 @@ class ItemList extends Component {
 
     renderList() {
         const {itemsByNut, activeNut, selectItem} = this.props;
-        return itemsByNut[activeNut].items.map((items) => {
+        if (typeof itemsByNut[activeNut] === "undefined") {
+            return (
+                <li></li>
+            );
+        }
+
+        return itemsByNut[activeNut].items.map((item) => {
             return (
                 <li
-                    key={items.id}
-                    onClick={() => selectItem(items)}
+                    key={item.id}
+                    onClick={() => selectItem(item)}
                 >
-                    {items.title}
+                    {item.title}
                 </li>
             );
         });
@@ -78,7 +82,12 @@ function mapStateToProps(state) {
 // Get actions and pass them as props to to ItemList
 //      > now ItemList has this.props.selectItem
 function matchDispatchToProps(dispatch) {
-    return bindActionCreators({selectItem: selectItem, fetchPosts: fetchPosts, selectNut: selectNut}, dispatch);
+    return bindActionCreators({
+            selectItem: selectItem,
+            fetchPosts: fetchPosts,
+            selectNut: selectNut
+        },
+        dispatch);
 }
 
 // We don't want to return the plain ItemList (component) anymore, we want to return the smart Container
