@@ -10,7 +10,7 @@ module.exports = {
         port: 3000
     },
     devtool: debug ? "source-map" : null,
-    entry: "./index.js",
+    entry: "./web/js/index.js",
     output: {
         path: __dirname,
         filename: "dist/bundle.js",
