@@ -37,9 +37,8 @@ export default class App extends Component {
                 <h1>Splaysh</h1>
                 <div>{counter}</div>
                 <hr/>
-                <ItemList/>
-                <hr/>
                 <ItemDetail/>
+                <ItemList/>
             </header>
         );
     }

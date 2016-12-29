@@ -65,7 +65,6 @@ export function fetchItems(nut) {
         const dynamoDb = new AWS.DynamoDB.DocumentClient();
         const scanPromise = dynamoDb.scan(params).promise();
         scanPromise.then(data => {
-            // Do something else.
             console.log("dynamodb query succeeded.");
             dispatch(receiveItems(nut, data.Items))
         }).catch(err => {

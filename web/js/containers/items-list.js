@@ -16,8 +16,6 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        // const {fetchItems, activeNut} = this.props;
-        // fetchItems && fetchItems(activeNut || 'reactjs');
         const {fetchItems, activeNut} = this.props;
         fetchItems && fetchItems(activeNut || 'reactjs');
     }
@@ -55,7 +53,7 @@ class ItemList extends Component {
                     key={item.id}
                     onClick={() => selectItem(item)}
                 >
-                    {item.title}
+                    {item.content}
                 </li>
             );
         });
