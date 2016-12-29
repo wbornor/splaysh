@@ -1,0 +1,29 @@
+--- 
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Create splaysh web CFN assets"
+Parameters:
+  EnvironmentTag:
+    Type: String
+    Description: Environment of the Stack
+  DynamoDBTableParameter: 
+    Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb.prd.entry"
+    Description: "Arn of the DynamoDB Table"
+    Type: String
+Resources: 
+  splayshbrowseruser:
+    Type: "AWS::IAM::User"
+    Properties: 
+      Path: "/functional/"
+      Policies:
+      - PolicyName: readtableonly
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - "dynamodb:BatchGetItem"
+                - "dynamodb:GetItem"
+                - "dynamodb:Query"
+                - "dynamodb:Scan"
+              Resource:
+                - Ref: DynamoDBTableParameter

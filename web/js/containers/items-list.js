@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {selectItem, selectNut, fetchPosts, fetchItems} from '../actions/index'
+import {selectItem, selectNut, fetchItems} from '../actions/index'
 
 
 class ItemList extends Component {
@@ -16,24 +16,24 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        // const {fetchPosts, activeNut} = this.props;
-        // fetchPosts && fetchPosts(activeNut || 'reactjs');
+        // const {fetchItems, activeNut} = this.props;
+        // fetchItems && fetchItems(activeNut || 'reactjs');
         const {fetchItems, activeNut} = this.props;
         fetchItems && fetchItems(activeNut || 'reactjs');
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.activeNut !== this.props.activeNut) {
-            const {fetchPosts, activeNut} = nextProps;
-            fetchPosts && fetchPosts(activeNut || 'reactjs');
+            const {fetchItems, activeNut} = nextProps;
+            fetchItems && fetchItems(activeNut || 'reactjs');
         }
     }
 
     handleRefreshClick(e) {
         e.preventDefault();
 
-        const {fetchPosts, activeNut} = this.props;
-        fetchPosts(activeNut || 'reactjs');
+        const {fetchItems, activeNut} = this.props;
+        fetchItems(activeNut || 'reactjs');
     }
 
     // handleChange(nextSubreddit) {
@@ -86,7 +86,6 @@ function mapStateToProps(state) {
 function matchDispatchToProps(dispatch) {
     return bindActionCreators({
         selectItem: selectItem,
-        fetchPosts: fetchPosts,
         fetchItems: fetchItems,
         selectNut: selectNut
     }, dispatch);

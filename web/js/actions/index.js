@@ -1,8 +1,8 @@
 "use strict";
-
-import Promise from 'bluebird';
 import 'aws-sdk/dist/aws-sdk';
 const AWS = window.AWS;
+
+AWS.config.setPromisesDependency(require('bluebird'));
 
 export const selectItem = (item) => {
     console.log("You clicked on item: ", item.first);
@@ -35,42 +35,8 @@ function receiveItems(nut, json) {
     return {
         type: RECEIVE_ITEMS,
         nut: nut,
-        items: json.data.children.map(child => child.data),
+        items: json,
         receivedAt: Date.now()
-    }
-}
-
-export function fetchPosts(nut) {
-
-    // Thunk middleware knows how to handle functions.
-    // It passes the dispatch method as an argument to the function,
-    // thus making it able to dispatch actions itself.
-
-    return function (dispatch) {
-
-        // First dispatch: the app state is updated to inform
-        // that the API call is starting.
-
-        dispatch(requestItems(nut));
-
-        // The function called by the thunk middleware can return a value,
-        // that is passed on as the return value of the dispatch method.
-
-        // In this case, we return a promise to wait for.
-        // This is not required by thunk middleware, but it is convenient for us.
-
-        return fetch(`http://www.reddit.com/r/${nut}.json`)
-            .then(response => response.json())
-            .then(json =>
-
-                // We can dispatch many times!
-                // Here, we update the app state with the results of the API call.
-
-                dispatch(receiveItems(nut, json))
-            );
-
-        // In a real world app, you also want to
-        // catch any error in the network call.
     }
 }
 
@@ -79,48 +45,38 @@ export function fetchItems(nut) {
     return function (dispatch) {
         dispatch(requestItems(nut));
 
+        //TODO move these to a config file
+        const readOnlyCredentials = new AWS.Credentials(
+            'AKIAIGPPD77VYJNNU2IQ',
+            'McjQcGxHtIXdHfibvyEhXZfj8Zu+2+KMrna/zQQU'
+        );
+
         AWS.config.update({
             region: "us-east-1",
-            endpoint: "http://localhost:3000"
+            credentials: readOnlyCredentials
         });
 
-        //const dynamoDb = Promise.promisifyAll(new AWS.DynamoDB.DocumentClient());
-        const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
+        //TODO move these to a config file
         const params = {
             TableName: "splayshdb.prd.entry",
-            // KeyConditionExpression: "#yr = :yyyy",
-            // ExpressionAttributeNames: {
-            //     "#yr": "year"
-            // },
-            // ExpressionAttributeValues: {
-            //     ":yyyy": 1985
-            // }
+            Limit: 50
         };
 
-        dynamoDb.scan(params)
-            .then(result => {
-                // Do something else.
-                console.log("Query succeeded.");
-                data.Items.forEach(function (item) {
-                    console.log(" -", item.year + ": " + item.title);
-                });
-                dispatch(receiveItems(nut, json))
-            }, err => {
-                // handle error
-                console.error('dynamodb query failed: ' + JSON.stringify(err));
-            })
-            .then(json => {
-                    dispatch(receiveItems(nut, json))
-                }
-            );
-
+        const dynamoDb = new AWS.DynamoDB.DocumentClient();
+        const scanPromise = dynamoDb.scan(params).promise();
+        scanPromise.then(data => {
+            // Do something else.
+            console.log("dynamodb query succeeded.");
+            dispatch(receiveItems(nut, data.Items))
+        }).catch(err => {
+            // handle error
+            console.error('dynamodb query failed: ' + JSON.stringify(err));
+        });
     }
-
 }
 
-function shouldFetchPosts(state, subreddit) {
-    const posts = state.postsBySubreddit[subreddit];
+function shouldFetchItems(state, nut) {
+    const posts = state.itemsByNut[nut];
     if (!posts) {
         return true
     } else if (posts.isFetching) {
@@ -130,10 +86,10 @@ function shouldFetchPosts(state, subreddit) {
     }
 }
 
-export function fetchPostsIfNeeded(subreddit) {
+export function fetchItemsIfNeeded(nut) {
     return (dispatch, getState) => {
-        if (shouldFetchPosts(getState(), subreddit)) {
-            return dispatch(fetchPosts(subreddit))
+        if (shouldFetchItems(getState(), nut)) {
+            return dispatch(fetchItems(nut))
         }
     }
 }

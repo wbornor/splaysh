@@ -34,7 +34,7 @@ export default class App extends Component {
 
         return (
             <header>
-                <div>Wwwebpack is its thing with React ffffart and ES2015 fartt</div>
+                <h1>Splaysh</h1>
                 <div>{counter}</div>
                 <hr/>
                 <ItemList/>
