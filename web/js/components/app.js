@@ -39,6 +39,7 @@ export default class App extends Component {
                 <hr/>
                 <ItemList/>
                 <hr/>
+                <hr/>
                 <ItemDetail/>
             </header>
         );

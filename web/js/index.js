@@ -11,6 +11,9 @@ import createLogger from 'redux-logger';
 import allReducers from './reducers';
 import App from "./components/app";
 
+process.env.NODE_ENV = 'production';
+console.log("NODE_ENV: " + process.env.NODE_ENV);
+console.log("BABEL_ENV: " + process.env.BABEL_ENV);
 const logger = createLogger();
 const store = createStore(allReducers,
     applyMiddleware(thunk, promise, logger)
