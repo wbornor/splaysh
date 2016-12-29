@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {selectItem, selectNut, fetchPosts} from '../actions/index'
+import {selectItem, selectNut, fetchPosts, fetchItems} from '../actions/index'
 
 
 class ItemList extends Component {
@@ -16,8 +16,10 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        const {fetchPosts, activeNut} = this.props;
-        fetchPosts && fetchPosts(activeNut || 'reactjs');
+        // const {fetchPosts, activeNut} = this.props;
+        // fetchPosts && fetchPosts(activeNut || 'reactjs');
+        const {fetchItems, activeNut} = this.props;
+        fetchItems && fetchItems(activeNut || 'reactjs');
     }
 
     componentWillReceiveProps(nextProps) {
@@ -83,11 +85,11 @@ function mapStateToProps(state) {
 //      > now ItemList has this.props.selectItem
 function matchDispatchToProps(dispatch) {
     return bindActionCreators({
-            selectItem: selectItem,
-            fetchPosts: fetchPosts,
-            selectNut: selectNut
-        },
-        dispatch);
+        selectItem: selectItem,
+        fetchPosts: fetchPosts,
+        fetchItems: fetchItems,
+        selectNut: selectNut
+    }, dispatch);
 }
 
 // We don't want to return the plain ItemList (component) anymore, we want to return the smart Container

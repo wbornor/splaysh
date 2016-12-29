@@ -1,3 +1,9 @@
+"use strict";
+
+import Promise from 'bluebird';
+import 'aws-sdk/dist/aws-sdk';
+const AWS = window.AWS;
+
 export const selectItem = (item) => {
     console.log("You clicked on item: ", item.first);
     return {
@@ -66,6 +72,51 @@ export function fetchPosts(nut) {
         // In a real world app, you also want to
         // catch any error in the network call.
     }
+}
+
+export function fetchItems(nut) {
+
+    return function (dispatch) {
+        dispatch(requestItems(nut));
+
+        AWS.config.update({
+            region: "us-east-1",
+            endpoint: "http://localhost:3000"
+        });
+
+        //const dynamoDb = Promise.promisifyAll(new AWS.DynamoDB.DocumentClient());
+        const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+        const params = {
+            TableName: "splayshdb.prd.entry",
+            // KeyConditionExpression: "#yr = :yyyy",
+            // ExpressionAttributeNames: {
+            //     "#yr": "year"
+            // },
+            // ExpressionAttributeValues: {
+            //     ":yyyy": 1985
+            // }
+        };
+
+        dynamoDb.scan(params)
+            .then(result => {
+                // Do something else.
+                console.log("Query succeeded.");
+                data.Items.forEach(function (item) {
+                    console.log(" -", item.year + ": " + item.title);
+                });
+                dispatch(receiveItems(nut, json))
+            }, err => {
+                // handle error
+                console.error('dynamodb query failed: ' + JSON.stringify(err));
+            })
+            .then(json => {
+                    dispatch(receiveItems(nut, json))
+                }
+            );
+
+    }
+
 }
 
 function shouldFetchPosts(state, subreddit) {

@@ -17,10 +17,13 @@ module.exports = {
         filename: "dist/bundle.js",
     },
     module: {
+        noParse: [
+            /aws\-sdk/,
+        ],
         loaders: [{
             test: /\.js$/,
             loaders: ['babel'],
-            exclude: /node_modules/
+            exclude: [/node_modules/,/aws\-sdk/]
         }]
     },
     plugins: debug ? [] : [
