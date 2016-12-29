@@ -4,6 +4,7 @@
 import React, {Component} from 'react';
 import ItemList from '../containers/items-list';
 import ItemDetail from '../containers/item-detail';
+import MoreItems from '../containers/more-items';
 
 
 export default class App extends Component {
@@ -39,6 +40,7 @@ export default class App extends Component {
                 <hr/>
                 <ItemDetail/>
                 <ItemList/>
+                <MoreItems/>
             </header>
         );
     }

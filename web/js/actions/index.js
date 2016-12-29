@@ -31,16 +31,22 @@ function requestItems(nut) {
 }
 
 export const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
-function receiveItems(nut, json) {
-    return {
+function receiveItems(nut, result) {
+    let action = {
         type: RECEIVE_ITEMS,
         nut: nut,
-        items: json,
+        items: result.Items,
         receivedAt: Date.now()
+    };
+
+    if(result.LastEvaluatedKey){
+        action.lastEvaluatedKey = result.LastEvaluatedKey;
     }
+
+    return action;
 }
 
-export function fetchItems(nut) {
+export function fetchItems(nut, lastEvaluatedKey) {
 
     return function (dispatch) {
         dispatch(requestItems(nut));
@@ -57,16 +63,20 @@ export function fetchItems(nut) {
         });
 
         //TODO move these to a config file
-        const params = {
+        let params = {
             TableName: "splayshdb.prd.entry",
             Limit: 50
         };
 
+        if(lastEvaluatedKey){
+            params.ExclusiveStartKey = lastEvaluatedKey;
+        }
+
         const dynamoDb = new AWS.DynamoDB.DocumentClient();
         const scanPromise = dynamoDb.scan(params).promise();
-        scanPromise.then(data => {
+        scanPromise.then(result => {
             console.log("dynamodb query succeeded.");
-            dispatch(receiveItems(nut, data.Items))
+            dispatch(receiveItems(nut, result))
         }).catch(err => {
             // handle error
             console.error('dynamodb query failed: ' + JSON.stringify(err));

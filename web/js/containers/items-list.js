@@ -67,7 +67,6 @@ class ItemList extends Component {
 
         );
     }
-
 }
 
 // Get apps state and pass it as props to ItemList

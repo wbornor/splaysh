@@ -1,7 +1,7 @@
 /**
  * Created by wesbornor on 12/28/16.
  */
-import {  RECEIVE_ITEMS, REQUEST_ITEMS } from '../actions/index'
+import {RECEIVE_ITEMS, REQUEST_ITEMS} from '../actions/index'
 
 // var splayshjson = [
 //     {
@@ -62,11 +62,15 @@ import {  RECEIVE_ITEMS, REQUEST_ITEMS } from '../actions/index'
 //     }
 // ];
 
-function posts(state = {
-    isFetching: false,
-    didInvalidate: false,
-    items: []
-}, action) {
+function createItems(state = null, action) {
+    if (!state) {
+        state = {
+            isFetching: false,
+            didInvalidate: false,
+            items: []
+        }
+    }
+
     switch (action.type) {
         case REQUEST_ITEMS:
             return Object.assign({}, state, {
@@ -77,8 +81,9 @@ function posts(state = {
             return Object.assign({}, state, {
                 isFetching: false,
                 didInvalidate: false,
-                items: action.items,
-                lastUpdated: action.receivedAt
+                items: state.items.concat(action.items),
+                lastUpdated: action.receivedAt,
+                lastEvaluatedKey: action.lastEvaluatedKey
             });
         default:
             return state
@@ -92,18 +97,9 @@ export default (state = {}, action) => {
         case RECEIVE_ITEMS:
         case REQUEST_ITEMS:
             return Object.assign({}, state, {
-                [action.nut]: posts(state[action.nut], action)
+                [action.nut]: createItems(state[action.nut], action)
             });
         default:
             return state
     }
 }
-
-// export default (state = splayshjson, action) => {
-//     // switch (action.type) {
-//     //     case 'LIST_ITEMS':
-//     //         return splayshjson;
-//     //         break;
-//     // }
-//     return state;
-// }
