@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import ItemList from '../containers/items-list';
 import ItemDetail from '../containers/item-detail';
 import MoreItems from '../containers/more-items';
+import NutList from '../containers/nut-list';
 
 
 export default class App extends Component {
@@ -37,6 +38,7 @@ export default class App extends Component {
             <header>
                 <h1>Splaysh</h1>
                 <div>{counter}</div>
+                <NutList/>
                 <hr/>
                 <ItemDetail/>
                 <ItemList/>

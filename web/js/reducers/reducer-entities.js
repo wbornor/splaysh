@@ -72,65 +72,88 @@ import {normalize, schema} from 'normalizr';
 // Define the item schema
 const itemSchema = new schema.Entity('items');
 
-
 const defaultNuts = {
     all: {
+        id: 99999,
         type: 'All',
+        title: 'All',
         thumbnail: 'all.jpg',
         items: []
     },
-    1: {
+    talknut: {
+        id: 1,
         type: 'Talknut',
+        title: 'Talk',
         thumbnail: 'talknut.jpg',
         items: []
     },
-    2: {
+    favnut: {
+        id: 2,
         type: 'Favnut',
+        title: 'Favs',
         thumbnail: 'favnut.jpg',
         items: []
     },
-    3: {
+    photonut: {
+        id: 3,
         type: 'Photonut',
+        title: 'Photos',
         thumbnail: 'flickr_logo.png',
         items: []
     },
-    4: {
+    wishnut: {
+        id: 4,
         type: 'Wishnut',
+        title: 'Wishlist',
         thumbnail: 'wishnut.jpeg',
         items: []
     },
-    6: {
+    medianut: {
+        id: 6,
         type: 'Medianut',
+        title: 'Media',
         thumbnail: 'netflix-icon.png',
         items: []
     },
-    7: {
+    projectnut: {
+        id: 7,
         type: 'Projectnut',
+        title: 'Projects',
         thumbnail: 'debian.png',
         items: []
     },
-    8: {
+    analnut: {
+        id: 8,
         type: 'Analnut',
+        title: 'Analogies',
         thumbnail: 'Thing1thing2.jpg',
         items: []
     },
-    9: {
+    vidinut: {
+        id: 9,
         type: 'Vidinut',
+        title: 'Videos',
         thumbnail: 'vidinut.jpeg',
         items: []
     },
-    10: {
+    audinut: {
+        id: 10,
         type: 'Audinut',
+        title: 'Audio',
         thumbnail: 'headphones.jpg',
         items: []
     },
-    12: {
+    budnut: {
+        id: 12,
         type: 'Budnut',
+        title: 'Buds',
         thumbnail: 'Facebook-Icon.png',
         items: []
     },
-    13: {
+    mapnut: {
+        id: 13,
         type: 'Mapnut',
+        title: 'Maps',
         thumbnail: 'mapnut.jpeg',
         items: []
     }
@@ -140,8 +163,7 @@ const defaultEntities = {
     items: {},
     nuts: defaultNuts,
 };
-//todo migrate state format to normalized
-//  http://redux.js.org/docs/advanced/AsyncActions.html?_sm_au_=iQHjrPF4WQ5jQN8Q#note-on-nested-entities
+
 export default (entities = defaultEntities, action) => {
     switch (action.type) {
         case REQUEST_ITEMS:
@@ -193,9 +215,8 @@ export default (entities = defaultEntities, action) => {
 
                 out.items[actionItem.id] = normalizedEntityData.entities.items[actionItem.id];
                 out.nuts.all.items.push(actionItem.id);
-                out.nuts[actionItem.nut_id].items.push(actionItem.id);
+                out.nuts[actionItem.nut_type.toLowerCase()].items.push(actionItem.id);
             });
-
 
             out.isFetching = false;
             out.isStale = false;
