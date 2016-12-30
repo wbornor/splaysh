@@ -11,46 +11,46 @@ import {selectItem, selectNut, fetchItems} from '../actions/index'
 class ItemList extends Component {
     constructor(props) {
         super(props);
-        // this.handleChange = this.handleChange.bind(this);
         this.handleRefreshClick = this.handleRefreshClick.bind(this)
     }
 
     componentDidMount() {
-        const {fetchItems, activeNut} = this.props;
-        fetchItems && fetchItems(activeNut || 'reactjs');
+        const {fetchItems, entities} = this.props;
+        fetchItems(entities.lastEvaluatedKey);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.activeNut !== this.props.activeNut) {
-            const {fetchItems, activeNut} = nextProps;
-            fetchItems && fetchItems(activeNut || 'reactjs');
+        const {fetchItems, activeNut, entities} = nextProps;
+
+        if (nextProps.activeNut !== activeNut) {
+            fetchItems(entities.lastEvaluatedKey);
+            //TODO this should call a new action to present a nut subset of items
         }
     }
 
     handleRefreshClick(e) {
         e.preventDefault();
 
+        //TODO this can refresh a nut too so change this action creator to something other than `fetchItems`
         const {fetchItems, activeNut} = this.props;
-        fetchItems(activeNut || 'reactjs');
+        fetchItems();
     }
 
-    // handleChange(nextSubreddit) {
-    //     this.props.dispatch(selectSubreddit(nextSubreddit))
-    // }
-
-
     renderList() {
-        const {itemsByNut, activeNut, selectItem} = this.props;
-        if (typeof itemsByNut[activeNut] === "undefined") {
-            return (
-                <li></li>
-            );
+        const {entities, activeNut, selectItem} = this.props;
+        let keysArray = [];
+
+        if (activeNut && entities.nuts[activeNut]) {
+            keysArray = entities.nuts[activeNut].items;
+        } else {
+            keysArray = entities.allItems;
         }
 
-        return itemsByNut[activeNut].items.map((item) => {
+        return entities.allItems.map(itemId => {
+            const item = entities.items[itemId];
             return (
                 <li
-                    key={item.id}
+                    key={itemId}
                     onClick={() => selectItem(item)}
                 >
                     {item.content}
@@ -73,8 +73,8 @@ class ItemList extends Component {
 //      > whenever state changes, the ItemList will automatically re-render
 function mapStateToProps(state) {
     return {
-        itemsByNut: state.itemsByNut,
-        activeNut: state.activeNut
+        entities: state.entities,
+        activeNut: state.activeNut,
     };
 }
 

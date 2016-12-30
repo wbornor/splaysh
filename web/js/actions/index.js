@@ -23,18 +23,16 @@ export const selectNut = (nut) => {
 };
 
 export const REQUEST_ITEMS = 'REQUEST_ITEMS';
-function requestItems(nut) {
+function requestItems() {
     return {
-        type: REQUEST_ITEMS,
-        nut: nut
+        type: REQUEST_ITEMS
     }
 }
 
 export const RECEIVE_ITEMS = 'RECEIVE_ITEMS';
-function receiveItems(nut, result) {
+function receiveItems(result) {
     let action = {
         type: RECEIVE_ITEMS,
-        nut: nut,
         items: result.Items,
         receivedAt: Date.now()
     };
@@ -46,10 +44,10 @@ function receiveItems(nut, result) {
     return action;
 }
 
-export function fetchItems(nut, lastEvaluatedKey) {
+export function fetchItems(lastEvaluatedKey) {
 
     return function (dispatch) {
-        dispatch(requestItems(nut));
+        dispatch(requestItems());
 
         //TODO move these to a config file
         const readOnlyCredentials = new AWS.Credentials(
@@ -76,7 +74,7 @@ export function fetchItems(nut, lastEvaluatedKey) {
         const scanPromise = dynamoDb.scan(params).promise();
         scanPromise.then(result => {
             console.log("dynamodb query succeeded.");
-            dispatch(receiveItems(nut, result))
+            dispatch(receiveItems(result))
         }).catch(err => {
             // handle error
             console.error('dynamodb query failed: ' + JSON.stringify(err));
@@ -84,21 +82,21 @@ export function fetchItems(nut, lastEvaluatedKey) {
     }
 }
 
-function shouldFetchItems(state, nut) {
-    const posts = state.itemsByNut[nut];
-    if (!posts) {
-        return true
-    } else if (posts.isFetching) {
-        return false
-    } else {
-        return posts.didInvalidate
-    }
-}
-
-export function fetchItemsIfNeeded(nut) {
-    return (dispatch, getState) => {
-        if (shouldFetchItems(getState(), nut)) {
-            return dispatch(fetchItems(nut))
-        }
-    }
-}
+// function shouldFetchItems(state, nut) {
+//     const posts = state.itemsByNut[nut];
+//     if (!posts) {
+//         return true
+//     } else if (posts.isFetching) {
+//         return false
+//     } else {
+//         return posts.didInvalidate
+//     }
+// }
+//
+// export function fetchItemsIfNeeded(nut) {
+//     return (dispatch, getState) => {
+//         if (shouldFetchItems(getState(), nut)) {
+//             return dispatch(fetchItems(nut))
+//         }
+//     }
+// }

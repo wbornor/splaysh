@@ -140,8 +140,12 @@ const defaultEntities = {
 //  http://redux.js.org/docs/advanced/AsyncActions.html?_sm_au_=iQHjrPF4WQ5jQN8Q#note-on-nested-entities
 export default (entities = defaultEntities, action) => {
     switch (action.type) {
-        case RECEIVE_ITEMS:
         case REQUEST_ITEMS:
+            return Object.assign({}, entities, {
+                isFetching: true,
+                isStale: false
+            });
+        case RECEIVE_ITEMS:
 
             //entities: {
             //  nuts: {
@@ -159,7 +163,9 @@ export default (entities = defaultEntities, action) => {
             //         nut_id: 2,
             //         ...
             //     }
-            //   }
+            //   },
+            //
+            //  allItems: [ 939..., 2829..., ...]
             //}
 
             //for every new incoming item:
@@ -181,6 +187,12 @@ export default (entities = defaultEntities, action) => {
                 out.allItems.push(actionItem.id);
                 out.nuts[actionItem.nut_id].items.push(actionItem.id);
             });
+
+
+            out.isFetching = false;
+            out.isStale = false;
+            out.lastUpdated = action.receivedAt;
+            out.lastEvaluatedKey = action.lastEvaluatedKey;
 
             return out;
         default:

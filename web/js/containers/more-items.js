@@ -15,19 +15,26 @@ class MoreItems extends Component {
 
 
     renderLink() {
-        const {fetchItems, activeNut, itemsByNut} = this.props;
+        const {fetchItems, activeNut, entities} = this.props;
 
-        if (typeof itemsByNut[activeNut] === "undefined") {
+
+        if (activeNut && entities.nuts[activeNut]) {
+            if (entities.nuts[activeNut].items && entities.nuts[activeNut].items.length === 0) {
+                return (
+                    <h6>
+                        No items for {activeNut}...
+                    </h6>
+                );
+            }
+        } else if (entities.allItems.length === 0) {
             return (
                 <h6>
-                    No items for {activeNut}...
+                    No items...
                 </h6>
             );
         }
 
-        const lastEvaluatedKey = itemsByNut[activeNut].lastEvaluatedKey;
-
-        if (!lastEvaluatedKey) {
+        if (!entities.lastEvaluatedKey) {
             return (
                 <h6>
                     No more...
@@ -38,7 +45,7 @@ class MoreItems extends Component {
         return (
             <a
                 href="#"
-                onClick={() => fetchItems(activeNut, lastEvaluatedKey)}
+                onClick={() => fetchItems(entities.lastEvaluatedKey)}
             >
                 Click for more items
             </a>
@@ -55,14 +62,18 @@ class MoreItems extends Component {
     }
 }
 
-function mapStateToProps(state) {
+function
+
+mapStateToProps(state) {
     return {
-        itemsByNut: state.itemsByNut,
+        entities: state.entities,
         activeNut: state.activeNut
     };
 }
 
-function matchDispatchToProps(dispatch) {
+function
+
+matchDispatchToProps(dispatch) {
     return bindActionCreators({
         fetchItems: fetchItems,
     }, dispatch);
