@@ -13,11 +13,10 @@ export const selectItem = (item) => {
 };
 
 export const NUT_SELECTED = 'NUT_SELECTED';
-export const selectNut = (nut) => {
+export const selectNut = (nut = 'all') => {
     console.log("You selected on nut: ", nut);
     return {
         type: NUT_SELECTED,
-        payload: nut,
         nut: nut
     }
 };

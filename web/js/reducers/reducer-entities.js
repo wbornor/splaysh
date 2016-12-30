@@ -74,6 +74,11 @@ const itemSchema = new schema.Entity('items');
 
 
 const defaultNuts = {
+    all: {
+        type: 'All',
+        thumbnail: 'all.jpg',
+        items: []
+    },
     1: {
         type: 'Talknut',
         thumbnail: 'talknut.jpg',
@@ -134,7 +139,6 @@ const defaultNuts = {
 const defaultEntities = {
     items: {},
     nuts: defaultNuts,
-    allItems: []
 };
 //todo migrate state format to normalized
 //  http://redux.js.org/docs/advanced/AsyncActions.html?_sm_au_=iQHjrPF4WQ5jQN8Q#note-on-nested-entities
@@ -148,6 +152,11 @@ export default (entities = defaultEntities, action) => {
         case RECEIVE_ITEMS:
 
             //entities: {
+            //  all: {
+            //       type: 'All',
+            //       thumbnail: 'all.jpg',
+            //       items: [ 9393..., 1913..., 983311..., ...]
+            //  }
             //  nuts: {
             //     1: {
             //          type: 'Talknut',
@@ -165,14 +174,13 @@ export default (entities = defaultEntities, action) => {
             //     }
             //   },
             //
-            //  allItems: [ 939..., 2829..., ...]
             //}
 
             //for every new incoming item:
             //  normalize the item record
             //  append it to `entities.items`
-            //  add the `item.id`'s to the allItems array
-            //  add the `item.id`'s to the applicapable `entity.nut` `items` array
+            //  add the `item.id`'s to the `entity.nut.all.items` array
+            //  add the `item.id`'s to the applicable `entity.nut` `items` array
 
             if (!action || !action.items) {
                 return entities;
@@ -184,7 +192,7 @@ export default (entities = defaultEntities, action) => {
                 const normalizedEntityData = normalize(actionItem, itemSchema);
 
                 out.items[actionItem.id] = normalizedEntityData.entities.items[actionItem.id];
-                out.allItems.push(actionItem.id);
+                out.nuts.all.items.push(actionItem.id);
                 out.nuts[actionItem.nut_id].items.push(actionItem.id);
             });
 

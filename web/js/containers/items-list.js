@@ -15,8 +15,9 @@ class ItemList extends Component {
     }
 
     componentDidMount() {
-        const {fetchItems, entities} = this.props;
+        const {fetchItems, selectNut, entities} = this.props;
         fetchItems(entities.lastEvaluatedKey);
+        selectNut('all');
     }
 
     componentWillReceiveProps(nextProps) {
@@ -38,15 +39,8 @@ class ItemList extends Component {
 
     renderList() {
         const {entities, activeNut, selectItem} = this.props;
-        let keysArray = [];
 
-        if (activeNut && entities.nuts[activeNut]) {
-            keysArray = entities.nuts[activeNut].items;
-        } else {
-            keysArray = entities.allItems;
-        }
-
-        return entities.allItems.map(itemId => {
+        return entities.nuts[activeNut || 'all'].items.map(itemId => {
             const item = entities.items[itemId];
             return (
                 <li

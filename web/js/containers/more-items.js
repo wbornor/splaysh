@@ -17,16 +17,8 @@ class MoreItems extends Component {
     renderLink() {
         const {fetchItems, activeNut, entities} = this.props;
 
-
-        if (activeNut && entities.nuts[activeNut]) {
-            if (entities.nuts[activeNut].items && entities.nuts[activeNut].items.length === 0) {
-                return (
-                    <h6>
-                        No items for {activeNut}...
-                    </h6>
-                );
-            }
-        } else if (entities.allItems.length === 0) {
+        let nut = entities.nuts[activeNut || 'all'];
+        if (nut.items && nut.items.length === 0) {
             return (
                 <h6>
                     No items...
