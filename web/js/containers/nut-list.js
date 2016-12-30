@@ -13,16 +13,16 @@ class NutList extends Component {
     }
 
     renderList() {
-        const {entities, activeNut} = this.props;
+        const {entities, activeNut, selectNut} = this.props;
         const nuts = entities.nuts;
-        let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut, nuts.favnut];
+        let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut];
 
         //TODO highlight selected nut
         return orderedNuts.map(orderedNut => {
             return (
                 <li
                     key={orderedNut.id}
-                    onClick={() => selectNut(orderedNut)}
+                    onClick={() => selectNut(orderedNut.id)}
                 >
                     {orderedNut.title}
                 </li>

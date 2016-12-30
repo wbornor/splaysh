@@ -40,7 +40,9 @@ class ItemList extends Component {
     renderList() {
         const {entities, activeNut, selectItem} = this.props;
 
-        return entities.nuts[activeNut || 'all'].items.map(itemId => {
+        let nut = entities.nuts[activeNut || 'all'];
+
+        return nut.items.map(itemId => {
             const item = entities.items[itemId];
             return (
                 <li

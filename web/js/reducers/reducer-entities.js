@@ -74,85 +74,97 @@ const itemSchema = new schema.Entity('items');
 
 const defaultNuts = {
     all: {
-        id: 99999,
+        id: 'all',
+        nut_id: 9999,
         type: 'All',
         title: 'All',
         thumbnail: 'all.jpg',
         items: []
     },
     talknut: {
-        id: 1,
-        type: 'Talknut',
+        id: 'talknut',
+        nut_id: 1,
+        type: 'TALKNUT',
         title: 'Talk',
         thumbnail: 'talknut.jpg',
         items: []
     },
     favnut: {
-        id: 2,
-        type: 'Favnut',
+        id: 'favnut',
+        nut_id: 2,
+        type: 'FAVNUT',
         title: 'Favs',
         thumbnail: 'favnut.jpg',
         items: []
     },
     photonut: {
-        id: 3,
-        type: 'Photonut',
+        id: 'photonut',
+        nut_id: 3,
+        type: 'PHOTONUT',
         title: 'Photos',
         thumbnail: 'flickr_logo.png',
         items: []
     },
     wishnut: {
-        id: 4,
-        type: 'Wishnut',
+        id: 'wishnut',
+        nut_id: 4,
+        type: 'WISHNUT',
         title: 'Wishlist',
         thumbnail: 'wishnut.jpeg',
         items: []
     },
     medianut: {
-        id: 6,
-        type: 'Medianut',
+        id: 'medianut',
+        nut_id: 6,
+        type: 'MEDIANUT',
         title: 'Media',
         thumbnail: 'netflix-icon.png',
         items: []
     },
     projectnut: {
-        id: 7,
-        type: 'Projectnut',
+        id: 'medianut',
+        nut_id: 7,
+        type: 'PROJECTNUT',
         title: 'Projects',
         thumbnail: 'debian.png',
         items: []
     },
     analnut: {
-        id: 8,
-        type: 'Analnut',
+        id: 'analnut',
+        nut_id: 8,
+        type: 'ANALNUT',
         title: 'Analogies',
         thumbnail: 'Thing1thing2.jpg',
         items: []
     },
     vidinut: {
-        id: 9,
-        type: 'Vidinut',
+        id: 'vidinut',
+        nut_id: 9,
+        type: 'VIDINUT',
         title: 'Videos',
         thumbnail: 'vidinut.jpeg',
         items: []
     },
     audinut: {
-        id: 10,
-        type: 'Audinut',
+        id: 'audinut',
+        nut_id: 10,
+        type: 'AUDINUT',
         title: 'Audio',
         thumbnail: 'headphones.jpg',
         items: []
     },
     budnut: {
-        id: 12,
-        type: 'Budnut',
+        id: 'budnut',
+        nut_id: 12,
+        type: 'BUDNUT',
         title: 'Buds',
         thumbnail: 'Facebook-Icon.png',
         items: []
     },
     mapnut: {
-        id: 13,
-        type: 'Mapnut',
+        id: 'mapnut',
+        nut_id: 13,
+        type: 'MAPNUT',
         title: 'Maps',
         thumbnail: 'mapnut.jpeg',
         items: []
