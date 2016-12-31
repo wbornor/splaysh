@@ -49,7 +49,7 @@ class ItemList extends Component {
                     key={itemId}
                     onClick={() => selectItem(item)}
                 >
-                    {item.content}
+                    {item.create_date} {item.content}
                 </li>
             );
         });

@@ -26,4 +26,18 @@ aws cloudformation update-stack --profile $AWS_CLI_PROFILE \
 --stack-name $STACK_NAME \
 --template-body file://$CFN \
 --parameters file://$CFN_PARAM_JSON \
---capabilities CAPABILITY_IAM
+--capabilities CAPABILITY_IAM \
+|| \
+true
+
+npm install
+npm run webpack
+
+if [ "$ENV" = "prd" ]; then
+  S3DOMAIN="splaysh.com";
+else
+  S3DOMAIN="dev.splaysh.com";
+fi
+
+aws s3 --profile $AWS_CLI_PROFILE cp index.html s3://$S3DOMAIN/
+aws s3 --profile $AWS_CLI_PROFILE cp dist/bundle.js s3://$S3DOMAIN/dist/
