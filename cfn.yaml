@@ -6,7 +6,7 @@ Parameters:
     Type: String
     Description: Environment of the Stack
   DynamoDBTableParameter: 
-    Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb.prd.entry"
+    Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb.dev.items" #todo paramaratize this
     Description: "Arn of the DynamoDB Table"
     Type: String
 Resources: 

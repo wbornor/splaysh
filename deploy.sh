@@ -10,6 +10,17 @@ export CFN_PARAM_JSON="cfn-param-$ENV.json";
 export APP_NAME="splayshweb";
 export STACK_NAME="$APP_NAME-$ENV";
 export NOW=`date +%y%m%d%H%M%S`;
+export CONFIGS="splaysh-private-artifacts/splayshweb-config";
+
+if [ "$ENV" = "prd" ]; then
+  SITEDOMAIN="splaysh.com";
+  NODE_ENV="production";
+  CONFIGS="$CONFIGS/prd/config.js";
+else
+  SITEDOMAIN="dev.splaysh.com";
+  NODE_ENV="development";
+  CONFIGS="$CONFIGS/dev/config.js";
+fi
 
 aws cloudformation validate-template \
 --profile $AWS_CLI_PROFILE \
@@ -30,14 +41,10 @@ aws cloudformation update-stack --profile $AWS_CLI_PROFILE \
 || \
 true
 
+aws s3 --profile $AWS_CLI_PROFILE cp s3://$CONFIGS ./web/js/config.js
+
 npm install
 npm run webpack
 
-if [ "$ENV" = "prd" ]; then
-  S3DOMAIN="splaysh.com";
-else
-  S3DOMAIN="dev.splaysh.com";
-fi
-
-aws s3 --profile $AWS_CLI_PROFILE cp index.html s3://$S3DOMAIN/
-aws s3 --profile $AWS_CLI_PROFILE cp dist/bundle.js s3://$S3DOMAIN/dist/
+aws s3 --profile $AWS_CLI_PROFILE cp index.html s3://$SITEDOMAIN/
+aws s3 --profile $AWS_CLI_PROFILE cp dist/bundle.js s3://$SITEDOMAIN/dist/

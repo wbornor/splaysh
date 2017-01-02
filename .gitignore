@@ -2,3 +2,10 @@ splayshdb/
 *.json
 *.min.js
 *.iml
+*config.js
+.DS_Store
+.idea/*
+dist/
+node_modules/
+web/img/.DS_Store
+

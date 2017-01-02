@@ -1,4 +1,5 @@
 "use strict";
+import {Config} from '../config';
 import 'aws-sdk/dist/aws-sdk';
 const AWS = window.AWS;
 
@@ -47,21 +48,20 @@ export function fetchItems(lastEvaluatedKey) {
     return function (dispatch) {
         dispatch(requestItems());
 
-        //TODO move these to a config file
         const readOnlyCredentials = new AWS.Credentials(
-            'AKIAIGPPD77VYJNNU2IQ',
-            'McjQcGxHtIXdHfibvyEhXZfj8Zu+2+KMrna/zQQU'
+            Config.aws.awsAccessKeyId,
+            Config.aws.awsSecretAccessKeyId,
         );
 
         AWS.config.update({
-            region: "us-east-1",
+            region: Config.aws.region,
             credentials: readOnlyCredentials
         });
 
-        //TODO move these to a config file
         let params = {
-            TableName: "splayshdb.prd.entry",
-            Limit: 50
+            TableName: Config.aws.itemsTableName,
+            Limit: Config.aws.itemsTableFetchLimit,
+            // ScanIndexForward: false,
         };
 
         if(lastEvaluatedKey){
