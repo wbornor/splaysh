@@ -2,6 +2,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Create splaysh web CFN assets"
 Parameters:
+  AccountArn:
+    Type: String
+    Description: "ARN of AWS Account. Used as value in Join"
+    Default: "arn:aws:dynamodb:us-east-1:796019718156"
   EnvironmentTag:
     Type: String
     Description: Environment of the Stack
@@ -21,9 +25,11 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                - "dynamodb:BatchGetItem"
+                #- "dynamodb:BatchGetItem"
                 - "dynamodb:GetItem"
                 - "dynamodb:Query"
-                - "dynamodb:Scan"
+                #- "dynamodb:Scan"
               Resource:
                 - Ref: DynamoDBTableParameter
+                - !Join: ["/", [Ref: DynamoDBTableParameter, "index/item-nut-createdate"] ]
+                #TODO- !Join: [":", [Ref: AccountArn, Ref: DynamoDBTableParameter]]

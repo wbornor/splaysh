@@ -61,6 +61,16 @@ export function fetchItems(lastEvaluatedKey) {
         let params = {
             TableName: Config.aws.itemsTableName,
             Limit: Config.aws.itemsTableFetchLimit,
+            IndexName: Config.aws.itemsTableNutIndex,
+            KeyConditionExpression: "#nut = :nutval and #create >= :date",
+            ExpressionAttributeNames:{
+                "#nut": "nut_id",
+                "#create": "create_date"
+            },
+            ExpressionAttributeValues: {
+                ":date":"2006-06-28 0:0:0",
+                ":nutval": 1,
+            },
             // ScanIndexForward: false,
         };
 
@@ -69,8 +79,17 @@ export function fetchItems(lastEvaluatedKey) {
         }
 
         const dynamoDb = new AWS.DynamoDB.DocumentClient();
-        const scanPromise = dynamoDb.scan(params).promise();
-        scanPromise.then(result => {
+        // const scanPromise = dynamoDb.scan(params).promise();
+        // scanPromise.then(result => {
+        //     console.log("dynamodb query succeeded.");
+        //     dispatch(receiveItems(result))
+        // }).catch(err => {
+        //     // handle error
+        //     console.error('dynamodb query failed: ' + JSON.stringify(err));
+        // });
+
+        const queryPromise = dynamoDb.query(params).promise();
+        queryPromise.then(result => {
             console.log("dynamodb query succeeded.");
             dispatch(receiveItems(result))
         }).catch(err => {
