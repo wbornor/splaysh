@@ -12,17 +12,28 @@ class NutList extends Component {
         this.state = {counter: 0};
     }
 
-    getLIStyle() {
-        return {
-            background: "#eee",
+    getOlStyle() {
+        return 'list-inline'
+    }
 
+    getLiStyle(nutId) {
+        let {activeNut} = this.props;
+        let style = '';
+        style += 'btn';
+
+        if(activeNut === nutId){
+            style += ' btn-default'
+        } else {
+            style += ' btn-link'
         }
+        return style
     }
 
     renderList() {
         const {entities, activeNut, selectNut} = this.props;
         const nuts = entities.nuts;
-        let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut];
+        let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut, nuts.analnut,
+            nuts.budnut, nuts.wishnut, nuts.medianut, nuts.vidinut, nuts.audinut, nuts.mapnut];
 
         //TODO highlight selected nut
         return orderedNuts.map(orderedNut => {
@@ -30,7 +41,7 @@ class NutList extends Component {
                 <li
                     key={orderedNut.id}
                     onClick={() => selectNut(orderedNut.id)}
-                    style={this.getLIStyle()}
+                    className={this.getLiStyle(orderedNut.id)}
                 >
                     {orderedNut.title}
                 </li>
@@ -40,7 +51,9 @@ class NutList extends Component {
 
     render() {
         return (
-            <ol>
+            <ol
+                className={this.getOlStyle()}
+            >
                 {this.renderList()}
             </ol>
         );

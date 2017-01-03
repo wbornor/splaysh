@@ -5,25 +5,100 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
-/*
- * We need "if(!this.props.item)" because we set state to null by default
- * */
 
 class ItemDetail extends Component {
     constructor(props) {
         super(props);
     }
 
-    render() {
-        if (!this.props.item) {
-            return (<div>Select an item...</div>);
+    isTweet(item) {
+        if (item.hasOwnProperty('tweet::created_at')) {
+            return true;
+        }
+        return false;
+    }
+
+    getFormattedTweetContent(item) {
+        let content = item.content.toString();
+
+        //TODO this is still VERY messed up
+        try {
+            const userMentions = JSON.parse(item['tweet::entities::user_mentions']);
+            if (userMentions) {
+                userMentions.map(mention => {
+                    const href = "https://twitter.com/" + mention.screen_name;
+                    const anchor = '<a href="'+ href + '">@' + mention.screen_name + '</a>';
+                    content = content.replace('@' + mention.screen_name, anchor)
+                });
+            }
+        } catch (err) {
+            console.log('error trying to parse JSON: ' + err);
+        }
+
+        return content;
+    }
+
+    getItemBody(item) {
+        let content = item.content;
+
+        if (this.isTweet(item)) {
+            content = this.getFormattedTweetContent(item);
         }
         return (
+            <p
+                className={'col-sm-8 text-left'}
+            >
+                {content}
+            </p>
+        )
+    }
+
+    render() {
+        const {itemId, entities} = this.props;
+
+        if (!itemId) {
+            return (
+                null
+            )
+        }
+
+        const item = entities.items[itemId];
+
+        if (!item) {
+            return (
+                null
+            )
+        }
+
+        return (
             <div>
-                <img src={this.props.item['tweet::author::profile_image_url_https']} />
-                <h2>{this.props.item.title}</h2>
-                <h3>{this.props.item.content}</h3>
-                <h6>{this.props.item.create_date}</h6>
+                <div
+                    className={'row'}
+                >
+                    <strong
+                        className={'col-sm-4 text-left'}
+                    >
+                        {item.title}
+                    </strong>
+                    <img
+                        className={'col-sm-4 text-right'}
+                        src={item['tweet::author::profile_image_url_https']}
+                    />
+                </div>
+                <div
+                    className={'row'}
+                >
+                    {this.getItemBody(item)}
+                </div>
+                <div
+                    className={'row'}
+                >
+                    <p
+                        className={'col-sm-8 text-left'}
+                    >
+                        {item.create_date}
+                    </p>
+                </div>
             </div>
         );
     }
@@ -32,7 +107,8 @@ class ItemDetail extends Component {
 // "state.activeItem" is set in reducers/index.js
 function mapStateToProps(state) {
     return {
-        item: state.activeItem
+        activeItem: state.activeItem,
+        entities: state.entities
     };
 }
 

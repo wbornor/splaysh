@@ -3,7 +3,6 @@
  */
 import React, {Component} from 'react';
 import ItemList from '../containers/items-list';
-import ItemDetail from '../containers/item-detail';
 import MoreItems from '../containers/more-items';
 import NutList from '../containers/nut-list';
 
@@ -37,12 +36,19 @@ export default class App extends Component {
         return (
             <header>
                 <h1>Splaysh</h1>
-                <div>{counter}</div>
-                <NutList/>
+                <div className="row">
+                    <div className="col-md-12">
+                        <NutList/>
+                    </div>
+                </div>
                 <hr/>
-                <ItemDetail/>
-                <ItemList/>
+                <div className="row">
+                    <div className="col-md-12">
+                        <ItemList/>
+                    </div>
+                </div>
                 <MoreItems/>
+                <div>{counter}</div>
             </header>
         );
     }

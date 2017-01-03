@@ -6,6 +6,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {selectItem, selectNut, fetchItems} from '../actions/index'
+import ItemDetail from '../containers/item-detail';
 
 
 class ItemList extends Component {
@@ -37,6 +38,16 @@ class ItemList extends Component {
         fetchItems();
     }
 
+    getOlStyle() {
+        return 'list-unstyled'
+    }
+
+    getLiStyle(item) {
+        let style = '';
+
+        return style
+    }
+
     renderList() {
         const {entities, activeNut, selectItem} = this.props;
 
@@ -48,8 +59,9 @@ class ItemList extends Component {
                 <li
                     key={itemId}
                     onClick={() => selectItem(item)}
+                    className={this.getLiStyle(item)}
                 >
-                    {item.create_date} {item.content}
+                    <ItemDetail itemId={itemId}/>
                 </li>
             );
         });
@@ -57,9 +69,11 @@ class ItemList extends Component {
 
     render() {
         return (
-            <ul>
+            <ol
+                className={this.getOlStyle()}
+            >
                 {this.renderList()}
-            </ul>
+            </ol>
 
         );
     }
