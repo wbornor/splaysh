@@ -31,5 +31,5 @@ Resources:
                 #- "dynamodb:Scan"
               Resource:
                 - Ref: DynamoDBTableParameter
-                - !Join: ["/", [Ref: DynamoDBTableParameter, "index/item-nut-createdate"] ]
+                - !Join ["/", [Ref: DynamoDBTableParameter, "index/item-nut-createdate"] ]
                 #TODO- !Join: [":", [Ref: AccountArn, Ref: DynamoDBTableParameter]]

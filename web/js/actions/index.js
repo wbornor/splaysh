@@ -48,6 +48,12 @@ export function fetchItems(lastEvaluatedKey) {
     return function (dispatch) {
         dispatch(requestItems());
 
+        //todo REMOVE THIS!!!
+        var result = {};
+        result.Items = {};
+        dispatch(receiveItems(result));
+        //todo REMOVE THIS!!!
+
         const readOnlyCredentials = new AWS.Credentials(
             Config.aws.awsAccessKeyId,
             Config.aws.awsSecretAccessKeyId,
@@ -64,14 +70,14 @@ export function fetchItems(lastEvaluatedKey) {
             IndexName: Config.aws.itemsTableNutIndex,
             KeyConditionExpression: "#nut = :nutval and #create >= :date",
             ExpressionAttributeNames:{
-                "#nut": "nut_id",
+                "#nut": "nut_type",
                 "#create": "create_date"
             },
             ExpressionAttributeValues: {
                 ":date":"2006-06-28 0:0:0",
-                ":nutval": 1,
+                ":nutval": "TALKNUT",
             },
-            // ScanIndexForward: false,
+            ScanIndexForward: false,
         };
 
         if(lastEvaluatedKey){

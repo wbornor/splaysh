@@ -12,6 +12,13 @@ class NutList extends Component {
         this.state = {counter: 0};
     }
 
+    getLIStyle() {
+        return {
+            background: "#eee",
+
+        }
+    }
+
     renderList() {
         const {entities, activeNut, selectNut} = this.props;
         const nuts = entities.nuts;
@@ -23,6 +30,7 @@ class NutList extends Component {
                 <li
                     key={orderedNut.id}
                     onClick={() => selectNut(orderedNut.id)}
+                    style={this.getLIStyle()}
                 >
                     {orderedNut.title}
                 </li>
