@@ -12,10 +12,7 @@ class ItemDetail extends Component {
     }
 
     isTweet(item) {
-        if (item.hasOwnProperty('tweet::created_at')) {
-            return true;
-        }
-        return false;
+        return item.hasOwnProperty('tweet::created_at');
     }
 
     getFormattedTweetContent(item) {
@@ -45,11 +42,10 @@ class ItemDetail extends Component {
             content = this.getFormattedTweetContent(item);
         }
         return (
-            <p
+            <div
                 className={'col-sm-8 text-left'}
-            >
-                {content}
-            </p>
+                dangerouslySetInnerHTML={{__html: content}}
+            />
         )
     }
 
