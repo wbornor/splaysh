@@ -42,8 +42,8 @@ class ItemDetail extends Component {
             content = this.getFormattedTweetContent(item);
         }
         return (
-            <Col sm={8}>
-                dangerouslySetInnerHTML={{__html: content}}
+            <Col sm={8}
+                 dangerouslySetInnerHTML={{__html: content}}
             />
         )
     }
