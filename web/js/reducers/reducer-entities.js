@@ -38,7 +38,7 @@ var splayshjson = [
         "tweet::created_at": "2016-01-08 02:00:47",
         "tweet::entities::hashtags": "[{\"indices\": [40, 48], \"text\": \"CES2016\"}]",
         "tweet::entities::media": "[{\"source_user_id\": 2359602504, \"source_status_id_str\": \"685257569657462785\", \"expanded_url\": \"http://twitter.com/firstbuild/status/685257569657462785/photo/1\", \"display_url\": \"pic.twitter.com/poJqzaGz1e\", \"url\": \"https://t.co/poJqzaGz1e\", \"media_url_https\": \"https://pbs.twimg.com/media/CYKGGiqUkAA2aOe.jpg\", \"source_user_id_str\": \"2359602504\", \"source_status_id\": 685257569657462785, \"id_str\": \"685257540255387648\", \"sizes\": {\"large\": {\"h\": 768, \"resize\": \"fit\", \"w\": 1024}, \"small\": {\"h\": 255, \"resize\": \"fit\", \"w\": 340}, \"medium\": {\"h\": 450, \"resize\": \"fit\", \"w\": 600}, \"thumb\": {\"h\": 150, \"resize\": \"crop\", \"w\": 150}}, \"indices\": [126, 140], \"type\": \"photo\", \"id\": 685257540255387648, \"media_url\": \"http://pbs.twimg.com/media/CYKGGiqUkAA2aOe.jpg\"}]",
-        "tweet::entities::user _mentions": "[{\"id\": 2359602504, \"indices\": [3, 14], \"id_str\": \"2359602504\", \"screen_name\": \"firstbuild\", \"name\": \"FirstBuild\"}, {\"id\": 34732474, \"indices\": [52, 62], \"id_str\": \"34732474\", \"screen_name\": \"Indiegogo\", \"name\": \"Indiegogo\"}]",
+        "tweet::entities::user_mentions": "[{\"id\": 2359602504, \"indices\": [3, 14], \"id_str\": \"2359602504\", \"screen_name\": \"firstbuild\", \"name\": \"FirstBuild\"}, {\"id\": 34732474, \"indices\": [52, 62], \"id_str\": \"34732474\", \"screen_name\": \"Indiegogo\", \"name\": \"Indiegogo\"}]",
         "tweet::id_str": "685279952405540864",
         "url": "https://twitter.com/wbornor/status/685279952405540864"
     },

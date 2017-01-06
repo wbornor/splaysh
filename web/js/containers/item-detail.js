@@ -12,22 +12,18 @@ class ItemDetail extends Component {
         super(props);
     }
 
-    isTweet(item) {
+    static isTweet(item) {
         return item.hasOwnProperty('tweet::created_at');
     }
 
-    getFormattedTweetContent(item) {
-        let content = item.content.toString();
-
+    getEnrichedMentions(content, mentions) {
         try {
-            const userMentions = JSON.parse(item['tweet::entities::user_mentions']);
-            if (userMentions) {
-                userMentions.map(mention => {
-                    const href = "https://twitter.com/" + mention.screen_name;
-                    const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
-                    content = content.replace('@' + mention.screen_name, anchor)
-                });
-            }
+            const userMentionsJson = JSON.parse(mentions);
+            userMentionsJson.map(mention => {
+                const href = "https://twitter.com/" + mention.screen_name;
+                const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
+                content = content.replace('@' + mention.screen_name, anchor);
+            });
         } catch (err) {
             console.log('error trying to parse JSON: ' + err);
         }
@@ -35,10 +31,50 @@ class ItemDetail extends Component {
         return content;
     }
 
+    getEnrichedHashTags(content, hashTags) {
+        try {
+            const hashTagsJson = JSON.parse(hashTags);
+            hashTagsJson.map(tag => {
+                const href = "https://twitter.com/#" + tag.text;
+                const anchor = '<a href="' + href + '">#' + tag.text + '</a>';
+                content = content.replace('#' + tag.text, anchor);
+            });
+        } catch (err) {
+            console.log('error trying to parse JSON: ' + err);
+        }
+
+        return content;
+    }
+
+    getEnrichedUrls(content, urls) {
+        try {
+            const urlsJson = JSON.parse(urls);
+            urlsJson.map(url => {
+                const href = url.url;
+                const anchor = '<a href="' + href + '">' + url.display_url + '</a>';
+                content = content.replace(url.url, anchor);
+            });
+        } catch (err) {
+            console.log('error trying to parse JSON: ' + err);
+        }
+
+        return content;
+    }
+
+    getFormattedTweetContent(item) {
+        let content = item.content.toString();
+
+        content = this.getEnrichedMentions(content, item['tweet::entities::user_mentions']);
+        content = this.getEnrichedHashTags(content, item['tweet::entities::hashtags']);
+        content = this.getEnrichedUrls(content, item['tweet::entities::urls']);
+
+        return content;
+    }
+
     getItemBody(item) {
         let content = item.content;
 
-        if (this.isTweet(item)) {
+        if (ItemDetail.isTweet(item)) {
             content = this.getFormattedTweetContent(item);
         }
         return (
