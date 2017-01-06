@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Col, Row} from 'react-bootstrap';
+import {Media, Image} from 'react-bootstrap';
 
 
 class ItemDetail extends Component {
@@ -24,7 +24,7 @@ class ItemDetail extends Component {
                 const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
                 content = content.replace('@' + mention.screen_name, anchor);
             });
-        } catch (err) {
+        } catch (pass) {
             console.log('error trying to parse JSON: ' + err);
         }
 
@@ -78,10 +78,15 @@ class ItemDetail extends Component {
             content = this.getFormattedTweetContent(item);
         }
         return (
-            <Col sm={8}
-                 dangerouslySetInnerHTML={{__html: content}}
+            <p
+                dangerouslySetInnerHTML={{__html: content}}
             />
         )
+    }
+
+    static getNutThumbnailUrl(item, nuts){
+        const thumb = nuts[item.nut_type.toLowerCase()].thumbnail;
+        return 'web/img/' + thumb;
     }
 
     render() {
@@ -102,26 +107,26 @@ class ItemDetail extends Component {
         }
 
         return (
-            <div>
-                <Row>
-                    <Col sm={4}>
+            <Media>
+                <Media.Left>
+                    <Image
+                        rounded={true}
+                        src={item['tweet::author::profile_image_url_https']}
+                    />
+                </Media.Left>
+                <Media.Body>
+                    <Media.Heading>
                         {item.title}
-                    </Col>
-                    <Col sm={4}>
-                        <img
-                            src={item['tweet::author::profile_image_url_https']}
-                        />
-                    </Col>
-                </Row>
-                <Row>
+                    </Media.Heading>
                     {this.getItemBody(item)}
-                </Row>
-                <Row>
-                    <Col sm={8}>
-                        {item.create_date}
-                    </Col>
-                </Row>
-            </div>
+                </Media.Body>
+                <Media.Right>
+                    <Image
+                        rounded={true}
+                        src={ItemDetail.getNutThumbnailUrl(item, entities.nuts)}
+                    />
+                </Media.Right>
+            </Media>
         )
     }
 }

@@ -21,7 +21,7 @@ class ItemList extends Component {
         selectNut('all');
     }
 
-    componentWillReceiveProps(nextProps) {
+    static componentWillReceiveProps(nextProps) {
         const {fetchItems, activeNut, entities} = nextProps;
 
         if (nextProps.activeNut !== activeNut) {
@@ -38,16 +38,6 @@ class ItemList extends Component {
         fetchItems();
     }
 
-    getOlStyle() {
-        return 'list-unstyled'
-    }
-
-    getLiStyle(item) {
-        let style = '';
-
-        return style
-    }
-
     renderList() {
         const {entities, activeNut, selectItem} = this.props;
 
@@ -56,24 +46,19 @@ class ItemList extends Component {
         return nut.items.map(itemId => {
             const item = entities.items[itemId];
             return (
-                <li
-                    key={itemId}
+                <ItemDetail
+                    itemId={itemId}
                     onClick={() => selectItem(item)}
-                    className={this.getLiStyle(item)}
-                >
-                    <ItemDetail itemId={itemId}/>
-                </li>
+                />
             );
         });
     }
 
     render() {
         return (
-            <ol
-                className={this.getOlStyle()}
-            >
+            <div>
                 {this.renderList()}
-            </ol>
+            </div>
 
         );
     }
