@@ -24,8 +24,7 @@ class ItemDetail extends Component {
                 const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
                 content = content.replace('@' + mention.screen_name, anchor);
             });
-        } catch (pass) {
-            console.log('error trying to parse JSON: ' + err);
+        } catch (ignore) {
         }
 
         return content;
@@ -39,8 +38,7 @@ class ItemDetail extends Component {
                 const anchor = '<a href="' + href + '">#' + tag.text + '</a>';
                 content = content.replace('#' + tag.text, anchor);
             });
-        } catch (err) {
-            console.log('error trying to parse JSON: ' + err);
+        } catch (ignore) {
         }
 
         return content;
@@ -54,8 +52,7 @@ class ItemDetail extends Component {
                 const anchor = '<a href="' + href + '">' + url.display_url + '</a>';
                 content = content.replace(url.url, anchor);
             });
-        } catch (err) {
-            console.log('error trying to parse JSON: ' + err);
+        } catch (ignore) {
         }
 
         return content;
@@ -84,7 +81,7 @@ class ItemDetail extends Component {
         )
     }
 
-    static getNutThumbnailUrl(item, nuts){
+    static getNutThumbnailUrl(item, nuts) {
         const thumb = nuts[item.nut_type.toLowerCase()].thumbnail;
         return 'web/img/' + thumb;
     }
