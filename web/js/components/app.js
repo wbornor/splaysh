@@ -5,6 +5,7 @@ import React, {Component} from 'react';
 import ItemList from '../containers/items-list';
 import MoreItems from '../containers/more-items';
 import NutList from '../containers/nut-list';
+import { Col, Row } from 'react-bootstrap';
 
 
 export default class App extends Component {
@@ -36,18 +37,22 @@ export default class App extends Component {
         return (
             <header>
                 <h1>Splaysh</h1>
-                <div className="row">
-                    <div className="col-md-12">
+                <Row>
+                    <Col md={12}>
                         <NutList/>
-                    </div>
-                </div>
+                    </Col>
+                </Row>
                 <hr/>
-                <div className="row">
-                    <div className="col-md-12">
+                <Row>
+                    <Col md={12}>
                         <ItemList/>
-                    </div>
-                </div>
-                <MoreItems/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        <MoreItems/>
+                    </Col>
+                </Row>
                 <div>{counter}</div>
             </header>
         );

@@ -4,6 +4,7 @@
 
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Col, Row} from 'react-bootstrap';
 
 
 class ItemDetail extends Component {
@@ -18,13 +19,12 @@ class ItemDetail extends Component {
     getFormattedTweetContent(item) {
         let content = item.content.toString();
 
-        //TODO this is still VERY messed up
         try {
             const userMentions = JSON.parse(item['tweet::entities::user_mentions']);
             if (userMentions) {
                 userMentions.map(mention => {
                     const href = "https://twitter.com/" + mention.screen_name;
-                    const anchor = '<a href="'+ href + '">@' + mention.screen_name + '</a>';
+                    const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
                     content = content.replace('@' + mention.screen_name, anchor)
                 });
             }
@@ -42,8 +42,7 @@ class ItemDetail extends Component {
             content = this.getFormattedTweetContent(item);
         }
         return (
-            <div
-                className={'col-sm-8 text-left'}
+            <Col sm={8}>
                 dangerouslySetInnerHTML={{__html: content}}
             />
         )
@@ -68,35 +67,26 @@ class ItemDetail extends Component {
 
         return (
             <div>
-                <div
-                    className={'row'}
-                >
-                    <strong
-                        className={'col-sm-4 text-left'}
-                    >
+                <Row>
+                    <Col sm={4}>
                         {item.title}
-                    </strong>
-                    <img
-                        className={'col-sm-4 text-right'}
-                        src={item['tweet::author::profile_image_url_https']}
-                    />
-                </div>
-                <div
-                    className={'row'}
-                >
+                    </Col>
+                    <Col sm={4}>
+                        <img
+                            src={item['tweet::author::profile_image_url_https']}
+                        />
+                    </Col>
+                </Row>
+                <Row>
                     {this.getItemBody(item)}
-                </div>
-                <div
-                    className={'row'}
-                >
-                    <p
-                        className={'col-sm-8 text-left'}
-                    >
+                </Row>
+                <Row>
+                    <Col sm={8}>
                         {item.create_date}
-                    </p>
-                </div>
+                    </Col>
+                </Row>
             </div>
-        );
+        )
     }
 }
 
