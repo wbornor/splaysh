@@ -48,12 +48,6 @@ export function fetchItems(lastEvaluatedKey) {
     return function (dispatch) {
         dispatch(requestItems());
 
-        //todo REMOVE THIS!!!
-        var result = {};
-        result.Items = {};
-        dispatch(receiveItems(result));
-        //todo REMOVE THIS!!!
-
         const readOnlyCredentials = new AWS.Credentials(
             Config.aws.awsAccessKeyId,
             Config.aws.awsSecretAccessKeyId,
@@ -85,15 +79,6 @@ export function fetchItems(lastEvaluatedKey) {
         }
 
         const dynamoDb = new AWS.DynamoDB.DocumentClient();
-        // const scanPromise = dynamoDb.scan(params).promise();
-        // scanPromise.then(result => {
-        //     console.log("dynamodb query succeeded.");
-        //     dispatch(receiveItems(result))
-        // }).catch(err => {
-        //     // handle error
-        //     console.error('dynamodb query failed: ' + JSON.stringify(err));
-        // });
-
         const queryPromise = dynamoDb.query(params).promise();
         queryPromise.then(result => {
             console.log("dynamodb query succeeded.");

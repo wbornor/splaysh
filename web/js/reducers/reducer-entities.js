@@ -4,7 +4,7 @@
 "use strict";
 import {RECEIVE_ITEMS, REQUEST_ITEMS} from '../actions/index'
 
-var splayshjson = [
+let splayshjson = [
     {
         "content": "RT @GEAppliancesPR: And it all starts with telling Alexa to ask Geneva to preheat the oven. @amazonecho https://t.co/nlhyGdYEyr https://t.c…",
         "create_date": "2016-11-25 14:29:47",
@@ -177,7 +177,7 @@ const defaultEntities = {
 };
 
 export default (entities = defaultEntities, action) => {
-    action.items = splayshjson;
+    //action.items = splayshjson; //toggle for testing
 
     switch (action.type) {
         case REQUEST_ITEMS:

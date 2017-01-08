@@ -68,17 +68,41 @@ class ItemDetail extends Component {
         return content;
     }
 
+    static getTweetMedia(mediaString) {
+        try {
+            const mediaJson = mediaString;//JSON.parse(mediaString);
+            return mediaJson.map(media => {
+                console.log(media);
+                return (
+                    <Image
+                        rounded={true}
+                        src={media.media_url_https}
+                    />
+                );
+            })
+
+        } catch(ignore){
+        }
+
+        return null;
+    }
+
     getItemBody(item) {
         let content = item.content;
+        let media = null;
 
         if (ItemDetail.isTweet(item)) {
             content = this.getFormattedTweetContent(item);
+            media = ItemDetail.getTweetMedia(item['tweet::entities::media']);
         }
-        return (
+        return (<div>
             <p
                 dangerouslySetInnerHTML={{__html: content}}
             />
-        )
+            <div
+
+            >{media}</div>
+        </div>);
     }
 
     static getNutThumbnailUrl(item, nuts) {

@@ -47,6 +47,7 @@ class ItemList extends Component {
             const item = entities.items[itemId];
             return (
                 <ItemDetail
+                    key={itemId}
                     itemId={itemId}
                     onClick={() => selectItem(item)}
                 />

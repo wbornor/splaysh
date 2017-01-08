@@ -22,6 +22,7 @@ class NutList extends Component {
         return orderedNuts.map(orderedNut => {
             return (
                 <NavItem
+                    key={orderedNut.id}
                     onClick={() => selectNut(orderedNut.id)}
                     active={orderedNut.id === activeNut}
                 >
