@@ -5,6 +5,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Media, Image} from 'react-bootstrap';
+var linkifyHtml = require('linkifyjs/html');
 
 
 class ItemDetail extends Component {
@@ -18,13 +19,13 @@ class ItemDetail extends Component {
 
     getEnrichedMentions(content, mentions) {
         try {
-            const userMentionsJson = JSON.parse(mentions);
-            userMentionsJson.map(mention => {
+            mentions.map(mention => {
                 const href = "https://twitter.com/" + mention.screen_name;
-                const anchor = '<a href="' + href + '">@' + mention.screen_name + '</a>';
+                const anchor = '<a href="' + href + '" target="_blank">@' + mention.screen_name + '</a>';
                 content = content.replace('@' + mention.screen_name, anchor);
             });
         } catch (ignore) {
+            console.error(ignore);
         }
 
         return content;
@@ -32,13 +33,13 @@ class ItemDetail extends Component {
 
     getEnrichedHashTags(content, hashTags) {
         try {
-            const hashTagsJson = JSON.parse(hashTags);
-            hashTagsJson.map(tag => {
+            hashTags.map(tag => {
                 const href = "https://twitter.com/#" + tag.text;
-                const anchor = '<a href="' + href + '">#' + tag.text + '</a>';
+                const anchor = '<a href="' + href + '" target="_blank">#' + tag.text + '</a>';
                 content = content.replace('#' + tag.text, anchor);
             });
         } catch (ignore) {
+            console.error(ignore);
         }
 
         return content;
@@ -46,13 +47,13 @@ class ItemDetail extends Component {
 
     getEnrichedUrls(content, urls) {
         try {
-            const urlsJson = JSON.parse(urls);
-            urlsJson.map(url => {
+            urls.map(url => {
                 const href = url.url;
-                const anchor = '<a href="' + href + '">' + url.display_url + '</a>';
+                const anchor = '<a href="' + href + '" target="_blank">' + url.display_url + '</a>';
                 content = content.replace(url.url, anchor);
             });
         } catch (ignore) {
+            console.error(ignore);
         }
 
         return content;
@@ -64,15 +65,17 @@ class ItemDetail extends Component {
         content = this.getEnrichedMentions(content, item['tweet::entities::user_mentions']);
         content = this.getEnrichedHashTags(content, item['tweet::entities::hashtags']);
         content = this.getEnrichedUrls(content, item['tweet::entities::urls']);
+        content = linkifyHtml(content, {
+            defaultProtocol: 'https'
+        });
 
         return content;
     }
 
     static getTweetMedia(mediaString) {
         try {
-            const mediaJson = mediaString;//JSON.parse(mediaString);
+            const mediaJson = mediaString;
             return mediaJson.map(media => {
-                console.log(media);
                 return (
                     <Image
                         rounded={true}
@@ -99,9 +102,7 @@ class ItemDetail extends Component {
             <p
                 dangerouslySetInnerHTML={{__html: content}}
             />
-            <div
-
-            >{media}</div>
+            <div>{media}</div>
         </div>);
     }
 
