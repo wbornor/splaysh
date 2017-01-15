@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {selectItem, selectNut, fetchItems} from '../actions/index'
 import ItemDetail from '../containers/item-detail';
+import {DefaultNuts} from '../model/default-nuts';
 
 
 class ItemList extends Component {
@@ -17,7 +18,14 @@ class ItemList extends Component {
 
     componentDidMount() {
         const {fetchItems, selectNut, entities} = this.props;
-        fetchItems('TALKNUT', entities.lastEvaluatedKey);
+        //
+        for(let key in DefaultNuts){
+            if(!DefaultNuts.hasOwnProperty(key)){
+                continue;
+            }
+
+            fetchItems(DefaultNuts[key].type, entities.lastEvaluatedKey);
+        }
         selectNut('all');
     }
 

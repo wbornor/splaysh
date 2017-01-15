@@ -48,6 +48,11 @@ function receiveItems(result) {
 export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 
     return function (dispatch) {
+
+        if(nutType && nutType.toLowerCase() === 'all') {
+            return;
+        }
+
         dispatch(requestItems(nutType));
 
         const readOnlyCredentials = new AWS.Credentials(

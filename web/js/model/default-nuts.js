@@ -24,7 +24,7 @@ export const DefaultNuts = {
         nut_id: 2,
         type: 'FAVNUT',
         title: 'Favs',
-        thumbnail: 'favnut.jpg',
+        thumbnail: 'delicious.42px.gif',
         items: []
     },
     photonut: {
