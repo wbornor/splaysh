@@ -83,10 +83,11 @@ export default (entities = defaultEntities, action) => {
 
     switch (action.type) {
         case REQUEST_ITEMS:
-            return Object.assign({}, entities, {
-                isFetching: true,
-                isStale: false
-            });
+            let requestOut = Object.assign({}, entities);
+            let requestNut = requestOut.nuts[action.nut_type.toLowerCase()];
+            requestNut.isFetching = true;
+            requestNut.isStale = false;
+            return requestOut;
         case RECEIVE_ITEMS:
 
             //entities: {

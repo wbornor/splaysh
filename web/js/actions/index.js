@@ -22,9 +22,10 @@ export const selectNut = (nut = 'all') => {
 };
 
 export const REQUEST_ITEMS = 'REQUEST_ITEMS';
-function requestItems() {
+function requestItems(nutType) {
     return {
-        type: REQUEST_ITEMS
+        type: REQUEST_ITEMS,
+        nut_type: nutType
     }
 }
 
@@ -47,7 +48,7 @@ function receiveItems(result) {
 export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 
     return function (dispatch) {
-        dispatch(requestItems());
+        dispatch(requestItems(nutType));
 
         const readOnlyCredentials = new AWS.Credentials(
             Config.aws.awsAccessKeyId,
