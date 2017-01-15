@@ -79,6 +79,7 @@ class ItemDetail extends Component {
                 return (
                     <Image
                         rounded={true}
+                        responsive={true}
                         key={media.media_url_https}
                         src={media.media_url_https}
                     />
