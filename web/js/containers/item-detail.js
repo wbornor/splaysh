@@ -79,6 +79,7 @@ class ItemDetail extends Component {
                 return (
                     <Image
                         rounded={true}
+                        key={media.media_url_https}
                         src={media.media_url_https}
                     />
                 );
@@ -129,7 +130,9 @@ class ItemDetail extends Component {
         }
 
         return (
-            <Media>
+            <Media
+                key={itemId}
+            >
                 <Media.Left>
                     <Image
                         rounded={true}
