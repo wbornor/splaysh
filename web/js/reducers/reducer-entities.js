@@ -133,10 +133,13 @@ export default (entities = defaultEntities, action) => {
                 out.items[actionItem.id] = normalizedEntityData.entities.items[actionItem.id];
                 out.nuts.all.items.push(actionItem.id);
                 out.nuts.all.items.sort((a, b) => {
-                    if (a.create_date < b.create_date) {
+                    const itemA = out.items[a];
+                    const itemB = out.items[b];
+
+                    if (itemA.create_date > itemB.create_date) {
                         return -1;
                     }
-                    if (a.create_date > b.create_date) {
+                    if (itemA.create_date < itemB.create_date) {
                         return 1;
                     }
                     // a must be equal to b
