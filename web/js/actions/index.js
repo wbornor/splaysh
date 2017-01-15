@@ -33,6 +33,7 @@ function receiveItems(result) {
     let action = {
         type: RECEIVE_ITEMS,
         items: result.Items,
+        nut_type: result.nut_type,
         receivedAt: Date.now()
     };
 
@@ -82,6 +83,7 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
         const queryPromise = dynamoDb.query(params).promise();
         queryPromise.then(result => {
             console.log("dynamodb query succeeded.");
+            result['nut_type'] = nutType;
             dispatch(receiveItems(result))
         }).catch(err => {
             // handle error

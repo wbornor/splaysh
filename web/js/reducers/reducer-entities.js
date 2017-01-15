@@ -131,13 +131,24 @@ export default (entities = defaultEntities, action) => {
 
                 out.items[actionItem.id] = normalizedEntityData.entities.items[actionItem.id];
                 out.nuts.all.items.push(actionItem.id);
+                out.nuts.all.items.sort((a, b) => {
+                    if (a.create_date < b.create_date) {
+                        return -1;
+                    }
+                    if (a.create_date > b.create_date) {
+                        return 1;
+                    }
+                    // a must be equal to b
+                    return 0;
+                });
                 out.nuts[actionItem.nut_type.toLowerCase()].items.push(actionItem.id);
             });
 
-            out.isFetching = false;
-            out.isStale = false;
-            out.lastUpdated = action.receivedAt;
-            out.lastEvaluatedKey = action.lastEvaluatedKey;
+            let nut = out.nuts[action.nut_type.toLowerCase()];
+            nut.isFetching = false;
+            nut.isStale = false;
+            nut.lastUpdated = action.receivedAt;
+            nut.lastEvaluatedKey = action.lastEvaluatedKey;
 
             return out;
         default:
