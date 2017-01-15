@@ -43,7 +43,7 @@ function receiveItems(result) {
     return action;
 }
 
-export function fetchItems(lastEvaluatedKey) {
+export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 
     return function (dispatch) {
         dispatch(requestItems());
@@ -69,7 +69,7 @@ export function fetchItems(lastEvaluatedKey) {
             },
             ExpressionAttributeValues: {
                 ":date":"2006-06-28 0:0:0",
-                ":nutval": "TALKNUT",
+                ":nutval": nutType,
             },
             ScanIndexForward: false,
         };

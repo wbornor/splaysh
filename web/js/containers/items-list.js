@@ -17,7 +17,7 @@ class ItemList extends Component {
 
     componentDidMount() {
         const {fetchItems, selectNut, entities} = this.props;
-        fetchItems(entities.lastEvaluatedKey);
+        fetchItems('TALKNUT', entities.lastEvaluatedKey);
         selectNut('all');
     }
 
@@ -25,7 +25,7 @@ class ItemList extends Component {
         const {fetchItems, activeNut, entities} = nextProps;
 
         if (nextProps.activeNut !== activeNut) {
-            fetchItems(entities.lastEvaluatedKey);
+            fetchItems('TALKNUT', entities.lastEvaluatedKey);
             //TODO this should call a new action to present a nut subset of items
         }
     }

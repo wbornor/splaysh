@@ -37,7 +37,7 @@ class MoreItems extends Component {
         return (
             <a
                 href="#"
-                onClick={() => fetchItems(entities.lastEvaluatedKey)}
+                onClick={() => fetchItems(activeNut, entities.lastEvaluatedKey)}
             >
                 Click for more items
             </a>
