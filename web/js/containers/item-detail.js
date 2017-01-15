@@ -146,10 +146,11 @@ class ItemDetail extends Component {
                     {this.getItemBody(item)}
                 </Media.Body>
                 <Media.Right>
-                    <Image
-                        rounded={true}
+                    <img
+                        width={64}
+                        height={64}
                         src={ItemDetail.getNutThumbnailUrl(item, entities.nuts)}
-                    />
+                        alt="Image"/>
                 </Media.Right>
             </Media>
         )
