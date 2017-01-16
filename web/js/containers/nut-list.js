@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { Nav, NavItem} from 'react-bootstrap';
-import {selectNut} from '../actions/index';
+import {fetchItemsByNut} from '../actions/index';
 
 class NutList extends Component {
     constructor(props) {
@@ -14,7 +14,7 @@ class NutList extends Component {
     }
 
     renderList() {
-        const {entities, activeNut, selectNut} = this.props;
+        const {entities, activeNut, fetchItemsByNut} = this.props;
         const nuts = entities.nuts;
         let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut, nuts.analnut,
             nuts.budnut, nuts.wishnut, nuts.medianut, nuts.vidinut, nuts.audinut, nuts.mapnut];
@@ -23,7 +23,7 @@ class NutList extends Component {
             return (
                 <NavItem
                     key={orderedNut.id}
-                    onClick={() => selectNut(orderedNut.id)}
+                    onClick={() => fetchItemsByNut(orderedNut.type)}
                     active={orderedNut.id === activeNut}
                 >
                     {orderedNut.title}
@@ -52,7 +52,7 @@ function mapStateToProps(state) {
 
 function matchDispatchToProps(dispatch) {
     return bindActionCreators({
-        selectNut: selectNut
+        fetchItemsByNut: fetchItemsByNut
     }, dispatch);
 }
 

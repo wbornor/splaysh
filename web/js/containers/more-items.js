@@ -5,7 +5,7 @@
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {fetchItems} from '../actions/index'
+import {fetchItems, fetchItemsByNut} from '../actions/index'
 
 
 class MoreItems extends Component {
@@ -15,7 +15,7 @@ class MoreItems extends Component {
 
 
     renderLink() {
-        const {fetchItems, activeNut, entities} = this.props;
+        const {fetchItems, fetchItemsByNut, activeNut, entities} = this.props;
 
         let nut = entities.nuts[activeNut || 'all'];
         if (nut.items && nut.items.length === 0) {
@@ -34,14 +34,25 @@ class MoreItems extends Component {
             );
         }
 
-        return (
-            <a
-                href="#"
-                onClick={() => fetchItems(activeNut, nut.lastEvaluatedKey)}
-            >
-                Click for more items
-            </a>
-        );
+        if (activeNut === 'all') {
+            return (
+                <a
+                    href="#"
+                    onClick={() => fetchItems(activeNut, nut.lastEvaluatedKey)}
+                >
+                    Click for more items
+                </a>
+            );
+        } else {
+            return (
+                <a
+                    href="#"
+                    onClick={() => fetchItemsByNut(activeNut, nut.lastEvaluatedKey)}
+                >
+                    Click for more items
+                </a>
+            );
+        }
     }
 
     render() {
@@ -54,20 +65,17 @@ class MoreItems extends Component {
     }
 }
 
-function
-
-mapStateToProps(state) {
+function mapStateToProps(state) {
     return {
         entities: state.entities,
         activeNut: state.activeNut
     };
 }
 
-function
-
-matchDispatchToProps(dispatch) {
+function matchDispatchToProps(dispatch) {
     return bindActionCreators({
         fetchItems: fetchItems,
+        fetchItemsByNut: fetchItemsByNut,
     }, dispatch);
 }
 

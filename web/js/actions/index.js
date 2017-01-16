@@ -14,10 +14,10 @@ export const selectItem = (item) => {
 };
 
 export const NUT_SELECTED = 'NUT_SELECTED';
-export const selectNut = (nut = 'all') => {
+export const selectNut = (nutType = 'all') => {
     return {
         type: NUT_SELECTED,
-        nut: nut
+        nut: nutType
     }
 };
 
@@ -49,8 +49,6 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 
     return function (dispatch) {
 
-
-
         dispatch(requestItems(nutType));
 
         const readOnlyCredentials = new AWS.Credentials(
@@ -63,25 +61,7 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
             credentials: readOnlyCredentials
         });
 
-        let nutIndexParams = {
-            TableName: Config.aws.itemsTableName,
-            Limit: Config.aws.itemsTableFetchLimit,
-            IndexName: Config.aws.itemsTableNutIndex,
-            KeyConditionExpression: "#nut = :nutval and #create >= :date and #ispublic = :publicval",
-            ExpressionAttributeNames:{
-                "#nut": "nut_type",
-                "#create": "create_date",
-                "#ispublic": "is_public"
-            },
-            ExpressionAttributeValues: {
-                ":date":"2006-06-28 0:0:0",
-                ":nutval": nutType,
-                ":publicval": 1
-            },
-            ScanIndexForward: false,
-        };
-
-        let isPublicParams = {
+        let params = {
             TableName: Config.aws.itemsTableName,
             Limit: Config.aws.itemsTableFetchLimit,
             IndexName: Config.aws.itemsTableIsPublicIndex,
@@ -96,11 +76,6 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
             },
             ScanIndexForward: false,
         };
-
-        let params = nutIndexParams;
-        if(nutType && nutType.toLowerCase() === 'all') {
-            params = isPublicParams;
-        }
 
         if(lastEvaluatedKey){
             params.ExclusiveStartKey = lastEvaluatedKey;
@@ -118,6 +93,57 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
         });
     }
 }
+
+export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {
+
+    return function (dispatch) {
+
+        dispatch(requestItems(nutType));
+
+        const readOnlyCredentials = new AWS.Credentials(
+            Config.aws.awsAccessKeyId,
+            Config.aws.awsSecretAccessKeyId,
+        );
+
+        AWS.config.update({
+            region: Config.aws.region,
+            credentials: readOnlyCredentials
+        });
+
+        let params = {
+            TableName: Config.aws.itemsTableName,
+            Limit: Config.aws.itemsTableFetchLimit,
+            IndexName: Config.aws.itemsTableNutIndex,
+            KeyConditionExpression: "#nut = :nutval and #create >= :date",
+            ExpressionAttributeNames:{
+                "#nut": "nut_type",
+                "#create": "create_date"
+            },
+            ExpressionAttributeValues: {
+                ":date":"2006-06-28 0:0:0",
+                ":nutval": nutType
+            },
+            ScanIndexForward: false,
+        };
+
+        if(typeof lastEvaluatedKey != "undefined"){
+            params.ExclusiveStartKey = lastEvaluatedKey;
+        }
+
+        const dynamoDb = new AWS.DynamoDB.DocumentClient();
+        const queryPromise = dynamoDb.query(params).promise();
+        queryPromise.then(result => {
+            console.log("dynamodb query succeeded.");
+            result['nut_type'] = nutType;
+            dispatch(receiveItems(result));
+            dispatch(selectNut(nutType.toLowerCase()))
+        }).catch(err => {
+            // handle error
+            console.error('dynamodb query failed: ' + JSON.stringify(err));
+        });
+    }
+}
+
 
 // function shouldFetchItems(state, nut) {
 //     const posts = state.itemsByNut[nut];
