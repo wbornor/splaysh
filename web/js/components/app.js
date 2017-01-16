@@ -31,6 +31,16 @@ export default class App extends Component {
         clearInterval(this.interval)
     }
 
+    static getFooterStyle() {
+        return {
+            textAlign: 'center',
+            padding: '30px 0',
+            marginTop: '70px',
+            borderTop: '1px solid #e5e5e5',
+            backgroundColor: '#f5f5f5'
+        };
+    }
+
     render() {
         const {counter} = this.state;
 
@@ -53,7 +63,12 @@ export default class App extends Component {
                         <MoreItems/>
                     </Col>
                 </Row>
-                <div>{counter}</div>
+                <footer className="footer">
+                    <div style={App.getFooterStyle()}>
+                        <p>splaysh</p>
+                        <p>{counter}</p>
+                    </div>
+                </footer>
             </header>
         );
     }
