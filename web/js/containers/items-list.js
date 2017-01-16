@@ -27,7 +27,7 @@ class ItemList extends Component {
         const {fetchItems, activeNut, entities} = nextProps;
 
         if (nextProps.activeNut !== activeNut) {
-            fetchItems(nextProps.activeNut, entities.nuts[nextProps.activeNut].lastEvaluatedKey);
+            //fetchItems(nextProps.activeNut, entities.nuts[nextProps.activeNut].lastEvaluatedKey);
             //TODO this should call a new action to present a nut subset of items
         }
     }

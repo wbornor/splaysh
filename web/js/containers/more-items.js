@@ -26,7 +26,7 @@ class MoreItems extends Component {
             );
         }
 
-        if (!entities.lastEvaluatedKey) {
+        if (!nut.lastEvaluatedKey) {
             return (
                 <h6>
                     No more...
@@ -37,7 +37,7 @@ class MoreItems extends Component {
         return (
             <a
                 href="#"
-                onClick={() => fetchItems(activeNut, entities.lastEvaluatedKey)}
+                onClick={() => fetchItems(activeNut, nut.lastEvaluatedKey)}
             >
                 Click for more items
             </a>
