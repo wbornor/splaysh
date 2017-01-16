@@ -9,9 +9,9 @@ Parameters:
   EnvironmentTag:
     Type: String
     Description: Environment of the Stack
-  DynamoDBTableParameter: 
-    Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb.dev.items" #todo paramaratize this
-    Description: "Arn of the DynamoDB Table"
+  DynamoDBTableSchema:
+    Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb"
+    Description: "Base name of the DynamoDB Table"
     Type: String
 Resources: 
   splayshbrowseruser:
@@ -25,11 +25,9 @@ Resources:
           Statement:
             - Effect: Allow
               Action:
-                #- "dynamodb:BatchGetItem"
                 - "dynamodb:GetItem"
                 - "dynamodb:Query"
-                #- "dynamodb:Scan"
               Resource:
-                - Ref: DynamoDBTableParameter
-                - !Join ["/", [Ref: DynamoDBTableParameter, "index/item-nut-createdate"] ]
-                #TODO- !Join: [":", [Ref: AccountArn, Ref: DynamoDBTableParameter]]
+                - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items"]]
+                - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items/index/item-nut-createdate"]]
+                - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items/index/item-ispublic-createdate"]]

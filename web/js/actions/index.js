@@ -49,9 +49,7 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 
     return function (dispatch) {
 
-        if(nutType && nutType.toLowerCase() === 'all') {
-            return;
-        }
+
 
         dispatch(requestItems(nutType));
 
@@ -65,21 +63,44 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
             credentials: readOnlyCredentials
         });
 
-        let params = {
+        let nutIndexParams = {
             TableName: Config.aws.itemsTableName,
             Limit: Config.aws.itemsTableFetchLimit,
             IndexName: Config.aws.itemsTableNutIndex,
-            KeyConditionExpression: "#nut = :nutval and #create >= :date",
+            KeyConditionExpression: "#nut = :nutval and #create >= :date and #ispublic = :publicval",
             ExpressionAttributeNames:{
                 "#nut": "nut_type",
-                "#create": "create_date"
+                "#create": "create_date",
+                "#ispublic": "is_public"
             },
             ExpressionAttributeValues: {
                 ":date":"2006-06-28 0:0:0",
                 ":nutval": nutType,
+                ":publicval": 1
             },
             ScanIndexForward: false,
         };
+
+        let isPublicParams = {
+            TableName: Config.aws.itemsTableName,
+            Limit: Config.aws.itemsTableFetchLimit,
+            IndexName: Config.aws.itemsTableIsPublicIndex,
+            KeyConditionExpression: "#create >= :date and #ispublic = :publicval",
+            ExpressionAttributeNames:{
+                "#create": "create_date",
+                "#ispublic": "is_public"
+            },
+            ExpressionAttributeValues: {
+                ":date":"2006-06-28 0:0:0",
+                ":publicval": 1
+            },
+            ScanIndexForward: false,
+        };
+
+        let params = nutIndexParams;
+        if(nutType && nutType.toLowerCase() === 'all') {
+            params = isPublicParams;
+        }
 
         if(lastEvaluatedKey){
             params.ExclusiveStartKey = lastEvaluatedKey;

@@ -18,14 +18,8 @@ class ItemList extends Component {
 
     componentDidMount() {
         const {fetchItems, selectNut, entities} = this.props;
-        //
-        for(let key in DefaultNuts){
-            if(!DefaultNuts.hasOwnProperty(key)){
-                continue;
-            }
 
-            fetchItems(DefaultNuts[key].type, entities.lastEvaluatedKey);
-        }
+        fetchItems(DefaultNuts.all.type, entities.lastEvaluatedKey);
         selectNut('all');
     }
 
@@ -33,7 +27,7 @@ class ItemList extends Component {
         const {fetchItems, activeNut, entities} = nextProps;
 
         if (nextProps.activeNut !== activeNut) {
-            fetchItems('TALKNUT', entities.lastEvaluatedKey);
+            fetchItems(nextProps.activeNut, entities.nuts[nextProps.activeNut].lastEvaluatedKey);
             //TODO this should call a new action to present a nut subset of items
         }
     }

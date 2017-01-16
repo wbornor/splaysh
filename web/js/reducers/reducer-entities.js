@@ -66,10 +66,6 @@ let splayshjson = [
 
 import {normalize, schema} from 'normalizr';
 
-// Define a nut schema
-//const nutSchema = new schema.Entity('nuts');
-
-
 // Define the item schema
 const itemSchema = new schema.Entity('items');
 
