@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {selectItem, selectNut, fetchItems} from '../actions/index'
 import ItemDetail from '../containers/item-detail';
-import {DefaultNuts} from '../model/default-nuts';
+import {DefaultNuts} from '../model/nuts';
 
 
 class ItemList extends Component {
@@ -50,7 +50,7 @@ class ItemList extends Component {
             return (
                 <ItemDetail
                     key={itemId}
-                    itemId={itemId}
+                    item={item}
                     onClick={() => selectItem(item)}
                 />
             );

@@ -5,7 +5,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Media, Image} from 'react-bootstrap';
-var linkifyHtml = require('linkifyjs/html');
+import linkifyHtml from 'linkifyjs/html';
+
+import TalknutItemDetail from './talknut-detail';
+import {GetNutThumbnailUrl} from '../model/nuts';
 
 
 class ItemDetail extends Component {
@@ -13,152 +16,59 @@ class ItemDetail extends Component {
         super(props);
     }
 
-    static isTweet(item) {
-        return item.hasOwnProperty('tweet::created_at');
-    }
+    static getItemBody(item) {
+        if (TalknutItemDetail.isTweet(item)) {
+            return (
+                <TalknutItemDetail item={item}/>
+            );
+        } else {
+            let content = item.content;
+            if (typeof item.content != 'undefined') {
+                content = linkifyHtml(item.content, {
+                    defaultProtocol: 'https'
+                });
+            }
 
-    getEnrichedMentions(content, mentions) {
-        try {
-            mentions.map(mention => {
-                const href = "https://twitter.com/" + mention.screen_name;
-                const anchor = '<a href="' + href + '" target="_blank">@' + mention.screen_name + '</a>';
-                content = content.replace('@' + mention.screen_name, anchor);
-            });
-        } catch (ignore) {
-            console.error(ignore);
+            return (
+                <Media
+                    key={item.id}
+                >
+                    <Media.Left>
+                    </Media.Left>
+                    <Media.Body>
+                        <Media.Heading>
+                            {item.title}
+                        </Media.Heading>
+                        {content}
+                    </Media.Body>
+                    <Media.Right>
+                        <Image
+                            width={64}
+                            height={64}
+                            src={GetNutThumbnailUrl(item)}
+                            alt="Image"
+                            rounded={true}
+                        />
+                    </Media.Right>
+                </Media>
+            )
         }
 
-        return content;
-    }
-
-    getEnrichedHashTags(content, hashTags) {
-        try {
-            hashTags.map(tag => {
-                const href = "https://twitter.com/#" + tag.text;
-                const anchor = '<a href="' + href + '" target="_blank">#' + tag.text + '</a>';
-                content = content.replace('#' + tag.text, anchor);
-            });
-        } catch (ignore) {
-            console.error(ignore);
-        }
-
-        return content;
-    }
-
-    getEnrichedUrls(content, urls) {
-        try {
-            urls.map(url => {
-                const href = url.url;
-                const anchor = '<a href="' + href + '" target="_blank">' + url.display_url + '</a>';
-                content = content.replace(url.url, anchor);
-            });
-        } catch (ignore) {
-            console.error(ignore);
-        }
-
-        return content;
-    }
-
-    getFormattedTweetContent(item) {
-        let content = item.content.toString();
-
-        content = this.getEnrichedMentions(content, item['tweet::entities::user_mentions']);
-        content = this.getEnrichedHashTags(content, item['tweet::entities::hashtags']);
-        content = this.getEnrichedUrls(content, item['tweet::entities::urls']);
-        content = linkifyHtml(content, {
-            defaultProtocol: 'https'
-        });
-
-        return content;
-    }
-
-    static getTweetMedia(mediaString) {
-        try {
-            const mediaJson = mediaString;
-            return mediaJson.map(media => {
-                return (
-                    <Image
-                        rounded={true}
-                        responsive={true}
-                        key={media.media_url_https}
-                        src={media.media_url_https}
-                    />
-                );
-            })
-
-        } catch(ignore){
-        }
-
-        return null;
-    }
-
-    getItemBody(item) {
-        let content = item.content;
-        let media = null;
-
-        if (ItemDetail.isTweet(item)) {
-            content = this.getFormattedTweetContent(item);
-            media = ItemDetail.getTweetMedia(item['tweet::entities::media']);
-        }
-        return (<div>
-            <p
-                dangerouslySetInnerHTML={{__html: content}}
-            />
-            <div>{media}</div>
-        </div>);
-    }
-
-    static getNutThumbnailUrl(item, nuts) {
-        const thumb = nuts[item.nut_type.toLowerCase()].thumbnail;
-        return 'web/img/' + thumb;
     }
 
     render() {
-        const {itemId, entities} = this.props;
+        const {item, entities} = this.props;
 
-        if (!itemId) {
+        if(item) {
             return (
-                null
+                <div>
+                    {ItemDetail.getItemBody(item)}
+                </div>
             )
         }
-
-        const item = entities.items[itemId];
-
-        if (!item) {
-            return (
-                null
-            )
-        }
-
-        return (
-            <Media
-                key={itemId}
-            >
-                <Media.Left>
-                    <Image
-                        rounded={true}
-                        src={item['tweet::author::profile_image_url_https']}
-                    />
-                </Media.Left>
-                <Media.Body>
-                    <Media.Heading>
-                        {item.title}
-                    </Media.Heading>
-                    {this.getItemBody(item)}
-                </Media.Body>
-                <Media.Right>
-                    <img
-                        width={64}
-                        height={64}
-                        src={ItemDetail.getNutThumbnailUrl(item, entities.nuts)}
-                        alt="Image"/>
-                </Media.Right>
-            </Media>
-        )
     }
 }
 
-// "state.activeItem" is set in reducers/index.js
 function mapStateToProps(state) {
     return {
         activeItem: state.activeItem,

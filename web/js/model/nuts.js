@@ -2,6 +2,15 @@
  * Created by wesbornor on 1/15/17.
  */
 
+export const GetNutThumbnailUrl = (item) => {
+    try {
+        const thumb = DefaultNuts[item.nut_type.toLowerCase()].thumbnail;
+        return 'web/img/' + thumb;
+    } catch (err) {
+        return 'web/img/' + DefaultNuts.talknut.thumbnail;
+    }
+};
+
 export const DefaultNuts = {
     all: {
         id: 'all',

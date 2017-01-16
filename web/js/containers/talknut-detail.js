@@ -1,0 +1,155 @@
+/**
+ * Created by wesbornor on 1/16/17.
+ */
+
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {Media, Image} from 'react-bootstrap';
+import linkifyHtml from 'linkifyjs/html';
+
+import {GetNutThumbnailUrl} from '../model/nuts';
+
+
+class TalknutItemDetail extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+
+    static isTweet(item) {
+        return item.hasOwnProperty('tweet::created_at');
+    }
+
+    static getEnrichedMentions(content, mentions) {
+        try {
+            mentions.map(mention => {
+                const href = "https://twitter.com/" + mention.screen_name;
+                const anchor = '<a href="' + href + '" target="_blank">@' + mention.screen_name + '</a>';
+                content = content.replace('@' + mention.screen_name, anchor);
+            });
+        } catch (ignore) {
+            console.error(ignore);
+        }
+
+        return content;
+    }
+
+    static getEnrichedHashTags(content, hashTags) {
+        try {
+            hashTags.map(tag => {
+                const href = "https://twitter.com/#" + tag.text;
+                const anchor = '<a href="' + href + '" target="_blank">#' + tag.text + '</a>';
+                content = content.replace('#' + tag.text, anchor);
+            });
+        } catch (ignore) {
+            console.error(ignore);
+        }
+
+        return content;
+    }
+
+    static getEnrichedUrls(content, urls) {
+        try {
+            urls.map(url => {
+                const href = url.url;
+                const anchor = '<a href="' + href + '" target="_blank">' + url.display_url + '</a>';
+                content = content.replace(url.url, anchor);
+            });
+        } catch (ignore) {
+            console.error(ignore);
+        }
+
+        return content;
+    }
+
+    static getFormattedTweetContent(item) {
+        let content = item.content.toString();
+
+        content = TalknutItemDetail.getEnrichedMentions(content, item['tweet::entities::user_mentions']);
+        content = TalknutItemDetail.getEnrichedHashTags(content, item['tweet::entities::hashtags']);
+        content = TalknutItemDetail.getEnrichedUrls(content, item['tweet::entities::urls']);
+        content = linkifyHtml(content, {
+            defaultProtocol: 'https'
+        });
+
+        return content;
+    }
+
+    static getTweetMedia(mediaString) {
+        try {
+            const mediaJson = mediaString;
+            return mediaJson.map(media => {
+                return (
+                    <Image
+                        rounded={true}
+                        responsive={true}
+                        key={media.media_url_https}
+                        src={media.media_url_https}
+                    />
+                );
+            })
+
+        } catch (ignore) {
+        }
+
+        return null;
+    }
+
+    static getItemBody(item) {
+        const content = TalknutItemDetail.getFormattedTweetContent(item);
+        const media = TalknutItemDetail.getTweetMedia(item['tweet::entities::media']);
+
+        return (<div>
+            <p
+                dangerouslySetInnerHTML={{__html: content}}
+            />
+            <div>{media}</div>
+        </div>);
+    }
+
+
+    render() {
+        const {item, entities} = this.props;
+
+        if (!item) {
+            return (
+                null
+            )
+        }
+
+        return (
+            <Media
+                key={item.id}
+            >
+                <Media.Left>
+                    <Image
+                        rounded={true}
+                        src={item['tweet::author::profile_image_url_https']}
+                    />
+                </Media.Left>
+                <Media.Body>
+                    <Media.Heading>
+                        {item.title}
+                    </Media.Heading>
+                    {TalknutItemDetail.getItemBody(item)}
+                </Media.Body>
+                <Media.Right>
+                    <img
+                        width={64}
+                        height={64}
+                        src={GetNutThumbnailUrl(item)}
+                        alt="Image"/>
+                </Media.Right>
+            </Media>
+        )
+    }
+}
+
+function mapStateToProps(state) {
+    return {
+        activeItem: state.activeItem,
+        entities: state.entities
+    };
+}
+
+export default connect(mapStateToProps)(TalknutItemDetail);

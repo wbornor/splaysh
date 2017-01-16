@@ -3,7 +3,7 @@
  */
 "use strict";
 import {RECEIVE_ITEMS, REQUEST_ITEMS} from '../actions/index';
-import {DefaultNuts} from '../model/default-nuts';
+import {DefaultNuts} from '../model/nuts';
 
 let splayshjson = [
     {
