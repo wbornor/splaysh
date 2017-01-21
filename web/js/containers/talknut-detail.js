@@ -8,6 +8,7 @@ import {Media, Image} from 'react-bootstrap';
 import linkifyHtml from 'linkifyjs/html';
 
 import {GetNutThumbnailUrl} from '../model/nuts';
+import {unescapeHTML} from '../util';
 
 
 class TalknutItemDetail extends Component {
@@ -15,6 +16,10 @@ class TalknutItemDetail extends Component {
         super(props);
     }
 
+
+    static isTalknutItem(item) {
+        return item.nut_type === 'TALKNUT';
+    }
 
     static isTweet(item) {
         return item.hasOwnProperty('tweet::created_at');
@@ -75,6 +80,14 @@ class TalknutItemDetail extends Component {
         return content;
     }
 
+    static getFormattedContent(item) {
+        let content = item.content.toString();
+
+        content = unescapeHTML(content);
+
+        return content;
+    }
+
     static getTweetMedia(mediaString) {
         try {
             const mediaJson = mediaString;
@@ -96,7 +109,8 @@ class TalknutItemDetail extends Component {
     }
 
     static getItemBody(item) {
-        const content = TalknutItemDetail.getFormattedTweetContent(item);
+        const content = TalknutItemDetail.isTweet(item) ?
+            TalknutItemDetail.getFormattedTweetContent(item) : TalknutItemDetail.getFormattedContent(item);
         const media = TalknutItemDetail.getTweetMedia(item['tweet::entities::media']);
 
         return (<div>
@@ -122,14 +136,24 @@ class TalknutItemDetail extends Component {
                 key={item.id}
             >
                 <Media.Left>
-                    <Image
-                        rounded={true}
-                        src={item['tweet::author::profile_image_url_https']}
-                    />
+                    <a
+                        href={item.url}
+                        target="_blank"
+                    >
+                        <Image
+                            rounded={true}
+                            src={item['tweet::author::profile_image_url_https']}
+                        />
+                    </a>
                 </Media.Left>
                 <Media.Body>
                     <Media.Heading>
-                        {item.title}
+                        <a
+                            href={item.url}
+                            target="_blank"
+                        >
+                            {item.title}
+                        </a>
                     </Media.Heading>
                     {TalknutItemDetail.getItemBody(item)}
                 </Media.Body>

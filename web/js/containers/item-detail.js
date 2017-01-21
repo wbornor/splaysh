@@ -8,6 +8,7 @@ import {Media, Image} from 'react-bootstrap';
 import linkifyHtml from 'linkifyjs/html';
 
 import TalknutItemDetail from './talknut-detail';
+import VidinutItemDetail from './vidinut-detail';
 import {GetNutThumbnailUrl} from '../model/nuts';
 
 
@@ -17,10 +18,14 @@ class ItemDetail extends Component {
     }
 
     static getItemBody(item) {
-        if (TalknutItemDetail.isTweet(item)) {
+        if (TalknutItemDetail.isTalknutItem(item)) {
             return (
                 <TalknutItemDetail item={item}/>
             );
+        } else if (VidinutItemDetail.isVidinutItem(item)) {
+            return (
+                <VidinutItemDetail item={item}/>
+            )
         } else {
             let content = item.content;
             if (typeof item.content != 'undefined') {
@@ -59,7 +64,7 @@ class ItemDetail extends Component {
     render() {
         const {item, entities} = this.props;
 
-        if(item) {
+        if (item) {
             return (
                 <Media.List>
                     {ItemDetail.getItemBody(item)}
