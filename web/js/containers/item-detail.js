@@ -30,7 +30,7 @@ class ItemDetail extends Component {
             }
 
             return (
-                <Media
+                <Media.ListItem
                     key={item.id}
                 >
                     <Media.Left>
@@ -50,7 +50,7 @@ class ItemDetail extends Component {
                             rounded={true}
                         />
                     </Media.Right>
-                </Media>
+                </Media.ListItem>
             )
         }
 
@@ -61,9 +61,9 @@ class ItemDetail extends Component {
 
         if(item) {
             return (
-                <div>
+                <Media.List>
                     {ItemDetail.getItemBody(item)}
-                </div>
+                </Media.List>
             )
         }
     }
