@@ -10,6 +10,7 @@ import linkifyHtml from 'linkifyjs/html';
 import TalknutItemDetail from './talknut-detail';
 import VidinutItemDetail from './vidinut-detail';
 import FavnutItemDetail from './favnut-detail';
+import BudnutItemDetail from './budnut-detail';
 import {GetNutThumbnailUrl} from '../model/nuts';
 
 
@@ -30,6 +31,10 @@ class ItemDetail extends Component {
         }  else if (FavnutItemDetail.isFavnutItem(item)) {
             return (
                 <FavnutItemDetail item={item}/>
+            )
+        } else if (BudnutItemDetail.isBudnutItem(item)) {
+            return (
+                <BudnutItemDetail item={item}/>
             )
         } else {
             let content = item.content;
