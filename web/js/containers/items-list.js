@@ -36,25 +36,34 @@ class ItemList extends Component {
         e.preventDefault();
 
         //TODO this can refresh a nut too so change this action creator to something other than `fetchItems`
-        const {fetchItems, activeNut} = this.props;
+        const {fetchItems} = this.props;
         fetchItems();
     }
 
     renderList() {
         const {entities, activeNut, selectItem} = this.props;
+        try {
+            let nut = entities.nuts[activeNut.toLowerCase() || 'all'];
 
-        let nut = entities.nuts[activeNut || 'all'];
+            return nut.items.map(itemId => {
+                const item = entities.items[itemId];
 
-        return nut.items.map(itemId => {
-            const item = entities.items[itemId];
-            return (
-                <ItemDetail
-                    key={itemId}
-                    item={item}
-                    onClick={() => selectItem(item)}
-                />
-            );
-        });
+                if (typeof item == 'undefined' || item == null) {
+                    return (<div/>);
+                }
+
+
+                return (
+                    <ItemDetail
+                        key={itemId}
+                        item={item}
+                        onClick={() => selectItem(item)}
+                    />
+                );
+            });
+        } catch (exception) {
+            return (<div/>);
+        }
     }
 
     render() {

@@ -2,7 +2,7 @@
  * Created by wesbornor on 12/28/16.
  */
 "use strict";
-import {RECEIVE_ITEMS, REQUEST_ITEMS} from '../actions/index';
+import {RECEIVE_ITEMS, REQUEST_ITEMS, NUT_SELECTED} from '../actions/index';
 import {DefaultNuts} from '../model/nuts';
 
 let splayshjson = [
@@ -137,7 +137,9 @@ export default (entities = defaultEntities, action) => {
             nut.lastEvaluatedKey = action.lastEvaluatedKey;
 
             return out;
+        case NUT_SELECTED:
+            return entities;
         default:
-            return entities
+            return entities;
     }
 }

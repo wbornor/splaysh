@@ -24,7 +24,7 @@ class NutList extends Component {
                 <NavItem
                     key={orderedNut.id}
                     onClick={() => fetchItemsByNut(orderedNut.type)}
-                    active={orderedNut.id === activeNut}
+                    active={orderedNut.id === activeNut.toLowerCase()}
                 >
                     {orderedNut.title}
                 </NavItem>

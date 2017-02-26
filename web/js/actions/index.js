@@ -1,5 +1,6 @@
 "use strict";
 import {Config} from '../config';
+import moment from 'moment';
 import 'aws-sdk/dist/aws-sdk';
 const AWS = window.AWS;
 
@@ -46,7 +47,7 @@ function receiveItems(result) {
 }
 
 export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
-
+    nutType = nutType.toUpperCase();
     return function (dispatch) {
 
         dispatch(requestItems(nutType));
@@ -65,13 +66,13 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
             TableName: Config.aws.itemsTableName,
             Limit: Config.aws.itemsTableFetchLimit,
             IndexName: Config.aws.itemsTableIsPublicIndex,
-            KeyConditionExpression: "#create >= :date and #ispublic = :publicval",
+            KeyConditionExpression: "#create <= :date and #ispublic = :publicval",
             ExpressionAttributeNames:{
                 "#create": "create_date",
                 "#ispublic": "is_public"
             },
             ExpressionAttributeValues: {
-                ":date":"2006-06-28 0:0:0",
+                ":date":moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
                 ":publicval": 1
             },
             ScanIndexForward: false,
@@ -95,6 +96,7 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
 }
 
 export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {
+    nutType = nutType.toUpperCase();
 
     return function (dispatch) {
 
@@ -114,13 +116,13 @@ export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {
             TableName: Config.aws.itemsTableName,
             Limit: Config.aws.itemsTableFetchLimit,
             IndexName: Config.aws.itemsTableNutIndex,
-            KeyConditionExpression: "#nut = :nutval and #create >= :date",
+            KeyConditionExpression: "#nut = :nutval and #create <= :date",
             ExpressionAttributeNames:{
                 "#nut": "nut_type",
                 "#create": "create_date"
             },
             ExpressionAttributeValues: {
-                ":date":"2006-06-28 0:0:0",
+                ":date":moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
                 ":nutval": nutType
             },
             ScanIndexForward: false,
@@ -136,7 +138,7 @@ export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {
             console.log("dynamodb query succeeded.");
             result['nut_type'] = nutType;
             dispatch(receiveItems(result));
-            dispatch(selectNut(nutType.toLowerCase()))
+            dispatch(selectNut(nutType))
         }).catch(err => {
             // handle error
             console.error('dynamodb query failed: ' + JSON.stringify(err));
