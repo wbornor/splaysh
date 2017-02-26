@@ -109,16 +109,20 @@ class TalknutItemDetail extends Component {
     }
 
     static getItemBody(item) {
-        const content = TalknutItemDetail.isTweet(item) ?
-            TalknutItemDetail.getFormattedTweetContent(item) : TalknutItemDetail.getFormattedContent(item);
-        const media = TalknutItemDetail.getTweetMedia(item['tweet::entities::media']);
+        try {
+            const content = TalknutItemDetail.isTweet(item) ?
+                TalknutItemDetail.getFormattedTweetContent(item) : TalknutItemDetail.getFormattedContent(item);
+            const media = TalknutItemDetail.getTweetMedia(item['tweet::entities::media']);
 
-        return (<div>
-            <p
-                dangerouslySetInnerHTML={{__html: content}}
-            />
-            <div>{media}</div>
-        </div>);
+            return (<div>
+                <p
+                    dangerouslySetInnerHTML={{__html: content}}
+                />
+                <div>{media}</div>
+            </div>);
+        } catch (exception){
+            return (<div/>);
+        }
     }
 
 

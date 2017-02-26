@@ -28,9 +28,7 @@ class MoreItems extends Component {
 
             if (!nut.lastEvaluatedKey) {
                 return (
-                    <h6>
-                        No more...
-                    </h6>
+                    <div/>
                 );
             }
 
@@ -38,7 +36,10 @@ class MoreItems extends Component {
                 return (
                     <a
                         href="#"
-                        onClick={() => fetchItems(activeNut, nut.lastEvaluatedKey)}
+                        onClick={(event) => {
+                            fetchItems(activeNut, nut.lastEvaluatedKey);
+                            event.preventDefault();
+                        }}
                     >
                         Click for more items
                     </a>
@@ -47,7 +48,10 @@ class MoreItems extends Component {
                 return (
                     <a
                         href="#"
-                        onClick={() => fetchItemsByNut(activeNut, nut.lastEvaluatedKey)}
+                        onClick={(event) => {
+                            fetchItemsByNut(activeNut, nut.lastEvaluatedKey);
+                            event.preventDefault()
+                        }}
                     >
                         Click for more items
                     </a>
