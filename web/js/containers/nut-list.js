@@ -15,21 +15,25 @@ class NutList extends Component {
 
     renderList() {
         const {entities, activeNut, fetchItemsByNut} = this.props;
-        const nuts = entities.nuts;
-        let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut, nuts.analnut,
-            nuts.budnut, nuts.wishnut, nuts.medianut, nuts.vidinut, nuts.audinut, nuts.mapnut];
+        try {
+            const nuts = entities.nuts;
+            let orderedNuts = [nuts.all, nuts.talknut, nuts.favnut, nuts.photonut, nuts.projectnut, nuts.analnut,
+                nuts.budnut, nuts.wishnut, nuts.medianut, nuts.vidinut, nuts.audinut, nuts.mapnut];
 
-        return orderedNuts.map(orderedNut => {
-            return (
-                <NavItem
-                    key={orderedNut.id}
-                    onClick={() => fetchItemsByNut(orderedNut.type)}
-                    active={orderedNut.id === activeNut.toLowerCase()}
-                >
-                    {orderedNut.title}
-                </NavItem>
-            )
-        });
+            return orderedNuts.map(orderedNut => {
+                return (
+                    <NavItem
+                        key={orderedNut.id}
+                        onClick={() => fetchItemsByNut(orderedNut.type)}
+                        active={orderedNut.id === activeNut.toLowerCase()}
+                    >
+                        {orderedNut.title}
+                    </NavItem>
+                )
+            });
+        }catch (exception){
+            return (<div/>);
+        }
     }
 
     render() {
