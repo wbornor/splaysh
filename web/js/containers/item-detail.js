@@ -12,6 +12,7 @@ import VidinutItemDetail from './vidinut-detail';
 import FavnutItemDetail from './favnut-detail';
 import BudnutItemDetail from './budnut-detail';
 import PhotonutItemDetail from './photonut-detail';
+import ProjectnutItemDetail from './projectnut-detail';
 import {GetNutThumbnailUrl} from '../model/nuts';
 
 
@@ -40,6 +41,10 @@ class ItemDetail extends Component {
         } else if (PhotonutItemDetail.isPhotonutItem(item)) {
             return (
                 <PhotonutItemDetail item={item}/>
+            )
+        } else if (ProjectnutItemDetail.isProjectnutItem(item)) {
+            return (
+                <ProjectnutItemDetail item={item}/>
             )
         } else {
             let content = item.content;

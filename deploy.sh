@@ -48,3 +48,5 @@ npm run webpack
 
 aws s3 --profile $AWS_CLI_PROFILE cp index.html s3://$SITEDOMAIN/
 aws s3 --profile $AWS_CLI_PROFILE cp dist/bundle.js s3://$SITEDOMAIN/dist/
+aws s3 --profile $AWS_CLI_PROFILE cp web/css s3://$SITEDOMAIN/web/css/ --recursive --include "*.css"
+aws s3 --profile $AWS_CLI_PROFILE cp web/img s3://$SITEDOMAIN/web/img/ --recursive
