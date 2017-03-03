@@ -13,6 +13,11 @@ import FavnutItemDetail from './favnut-detail';
 import BudnutItemDetail from './budnut-detail';
 import PhotonutItemDetail from './photonut-detail';
 import ProjectnutItemDetail from './projectnut-detail';
+import AnalnutItemDetail from './analnut-detail';
+import WishnutItemDetail from './wishnut-detail';
+import MedianutItemDetail from './medianut-detail';
+import MapnutItemDetail from './mapnut-detail';
+import AudinutItemDetail from './audinut-detail';
 import {GetNutThumbnailUrl} from '../model/nuts';
 
 
@@ -45,6 +50,26 @@ class ItemDetail extends Component {
         } else if (ProjectnutItemDetail.isProjectnutItem(item)) {
             return (
                 <ProjectnutItemDetail item={item}/>
+            )
+        } else if (AnalnutItemDetail.isAnalnutItem(item)) {
+            return (
+                <AnalnutItemDetail item={item}/>
+            )
+        } else if (WishnutItemDetail.isWishnutItem(item)) {
+            return (
+                <WishnutItemDetail item={item}/>
+            )
+        } else if (MedianutItemDetail.isMedianutItem(item)) {
+            return (
+                <MedianutItemDetail item={item}/>
+            )
+        } else if (MapnutItemDetail.isMapnutItem(item)) {
+            return (
+                <MapnutItemDetail item={item}/>
+            )
+        } else if (AudinutItemDetail.isAudinutItem(item)) {
+            return (
+                <AudinutItemDetail item={item}/>
             )
         } else {
             let content = item.content;
