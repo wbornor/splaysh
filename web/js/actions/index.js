@@ -72,7 +72,7 @@ export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
                 "#ispublic": "is_public"
             },
             ExpressionAttributeValues: {
-                ":date":moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+                ":date":moment(new Date()).utc().format("YYYY-MM-DD HH:mm:ss"),
                 ":publicval": 1
             },
             ScanIndexForward: false,
@@ -122,7 +122,7 @@ export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {
                 "#create": "create_date"
             },
             ExpressionAttributeValues: {
-                ":date":moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+                ":date":moment(new Date()).utc().format("YYYY-MM-DD HH:mm:ss"),
                 ":nutval": nutType
             },
             ScanIndexForward: false,
