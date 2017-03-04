@@ -22,11 +22,16 @@ class TalknutItemDetail extends Component {
     }
 
     static isTweet(item) {
-        return item.hasOwnProperty('tweet::created_at');
+        return item.hasOwnProperty('tweet::id_str');
     }
 
     static getEnrichedMentions(content, mentions) {
         try {
+            if( typeof mentions === 'string'){
+                mentions = JSON.parse(mentions);
+            }
+
+
             mentions.map(mention => {
                 const href = "https://twitter.com/" + mention.screen_name;
                 const anchor = '<a href="' + href + '" target="_blank">@' + mention.screen_name + '</a>';
@@ -41,6 +46,10 @@ class TalknutItemDetail extends Component {
 
     static getEnrichedHashTags(content, hashTags) {
         try {
+            if( typeof hashTags === 'string'){
+                hashTags = JSON.parse(hashTags);
+            }
+
             hashTags.map(tag => {
                 const href = "https://twitter.com/#" + tag.text;
                 const anchor = '<a href="' + href + '" target="_blank">#' + tag.text + '</a>';
@@ -55,6 +64,11 @@ class TalknutItemDetail extends Component {
 
     static getEnrichedUrls(content, urls) {
         try {
+
+            if( typeof urls === 'string'){
+                urls = JSON.parse(urls);
+            }
+
             urls.map(url => {
                 const href = url.url;
                 const anchor = '<a href="' + href + '" target="_blank">' + url.display_url + '</a>';
@@ -88,10 +102,13 @@ class TalknutItemDetail extends Component {
         return content;
     }
 
-    static getTweetMedia(mediaString) {
+    static getTweetMedia(media) {
         try {
-            const mediaJson = mediaString;
-            return mediaJson.map(media => {
+            if( typeof media === 'string'){
+                media = JSON.parse(media);
+            }
+
+            return media.map(media => {
                 return (
                     <Image
                         rounded={true}
