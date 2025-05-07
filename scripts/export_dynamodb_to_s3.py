@@ -90,10 +90,15 @@ class DynamoDBToStaticJSON:
         self.upload_to_s3(f'{self.export_base_path}/index.json', global_index)
 
 def main():
-    # Replace with your actual DynamoDB table and S3 bucket names
+    # Use environment variables for configuration
+    import os
+    
+    table_name = os.environ.get('DYNAMODB_TABLE', 'splaysh-items')
+    s3_bucket = os.environ.get('S3_BUCKET', 'splaysh-static-data')
+    
     exporter = DynamoDBToStaticJSON(
-        table_name='splaysh-items', 
-        s3_bucket='splaysh-static-data'
+        table_name=table_name, 
+        s3_bucket=s3_bucket
     )
     exporter.export_all()
 

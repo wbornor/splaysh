@@ -1,6 +1,6 @@
 -  optimize AWS infrastructure for lowest cost and free tier, using personal account. 
 - the current approach attempts to eliminate a backend API by just using a dynamo db JavaScript library to read records from a table. A better low cost approach should read the data from a static web site (hosted in S3) that serves json content 
--  use terraform to manage AWS infrastructure
+-  use cloudformation to manage AWS infrastructure
 -  Use GitHub for code repo
 -  Use GitHub actions to deploy code 
 - use a script to read the dynamo db table and write the json content to S3
