@@ -1,0 +1,145 @@
+name: Deploy Splaysh Web Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  id-token: write   # This is required for OIDC authentication
+  contents: read    # This is required to checkout the repository
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ vars.AWS_DEPLOYMENT_ROLE_ARN }}
+        aws-region: us-east-1  # Replace with your preferred region
+
+    - name: Determine Environment Variables
+      id: env-vars
+      run: |
+        if [[ "${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}" == "prod" ]]; then
+          echo "SITEDOMAIN=splaysh.com" >> $GITHUB_OUTPUT
+          echo "NODE_ENV=production" >> $GITHUB_OUTPUT
+          echo "CONFIGS_PATH=prd/config.js" >> $GITHUB_OUTPUT
+          echo "STACK_NAME=splaysh-prod" >> $GITHUB_OUTPUT
+        else
+          echo "SITEDOMAIN=dev.splaysh.com" >> $GITHUB_OUTPUT
+          echo "NODE_ENV=development" >> $GITHUB_OUTPUT
+          echo "CONFIGS_PATH=dev/config.js" >> $GITHUB_OUTPUT
+          echo "STACK_NAME=splaysh-dev" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Validate CloudFormation Template
+      run: |
+        aws cloudformation validate-template \
+          --template-body file://cfn.yaml
+
+    - name: Deploy or Update CloudFormation Stack
+      env:
+        STACK_NAME: ${{ steps.env-vars.outputs.STACK_NAME }}
+      run: |
+        aws cloudformation deploy \
+          --template-file cfn.yaml \
+          --stack-name $STACK_NAME \
+          --parameter-overrides EnvironmentTag=${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }} \
+          --capabilities CAPABILITY_IAM \
+          --no-fail-on-empty-changeset
+
+    - name: Fetch Configuration
+      env:
+        CONFIGS_BUCKET: ${{ vars.CONFIG_S3_BUCKET }}
+        CONFIGS_PATH: ${{ steps.env-vars.outputs.CONFIGS_PATH }}
+      run: |
+        aws s3 cp s3://$CONFIGS_BUCKET/$CONFIGS_PATH ./web/js/config.js
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build Web Application
+      env:
+        NODE_ENV: ${{ steps.env-vars.outputs.NODE_ENV }}
+      run: npm run webpack
+
+    - name: Deploy Web Artifacts
+      env:
+        SITEDOMAIN: ${{ steps.env-vars.outputs.SITEDOMAIN }}
+      run: |
+        aws s3 cp index.html s3://$SITEDOMAIN/
+        aws s3 cp dist/bundle.js s3://$SITEDOMAIN/dist/
+        aws s3 cp web/css s3://$SITEDOMAIN/web/css/ --recursive --include "*.css"
+
+    - name: Invalidate CloudFront Cache
+      env:
+        CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+          --paths "/*"
+
+    - name: Slack Deployment Notification
+      if: success()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+            "text": "✅ Deployment Successful for ${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }} environment",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "GitHub Action deployment completed successfully.\nEnvironment: ${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}\nCommit: ${{ github.sha }}"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Slack Deployment Failure
+      if: failure()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+            "text": "❌ Deployment Failed for ${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }} environment",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "GitHub Action deployment failed. Please check the workflow logs.\nEnvironment: ${{ inputs.environment || (github.ref == 'refs/heads/main' && 'prod' || 'dev') }}\nCommit: ${{ github.sha }}"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
