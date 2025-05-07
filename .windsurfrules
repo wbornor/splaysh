@@ -1,0 +1,54 @@
+-  optimize AWS infrastructure for lowest cost and free tier, using personal account. 
+- the current approach attempts to eliminate a backend API by just using a dynamo db JavaScript library to read records from a table. A better low cost approach should read the data from a static web site (hosted in S3) that serves json content 
+-  use terraform to manage AWS infrastructure
+-  Use GitHub for code repo
+-  Use GitHub actions to deploy code 
+- use a script to read the dynamo db table and write the json content to S3
+-  use a simple data model, blog posts are categorized by type, which is called a "nut"
+-  Nuts: talk, project, photo, media, anal (analogies), media
+-  each type of blog post has a different json schema, for example analnut (for analogies) has blog posts that follow the form "a : b :: x : y"
+-  Talknut is a general free text  post
+-  projectnut is project ideas 
+-  Photonut is a flickr album integration
+-  Medianut posts have an image, title, description of a favorite video or book
+- Favnut has posts about favorite links
+- Wishnut has posts about wishlist items
+- Audinut has posts with the names of audio files
+- budnut has posts about maps
+- mapnut has posts about maps
+-  the blog simple, infinite scroll of posts. Selecting a Nut filters posts to just that type. Posts are paged
+- Static JSON files organized in chunked and paginated directory structure:
+```
+   /data/
+     /posts/
+       /index.json      # Metadata with pagination info & counts
+       /talknut/
+         /index.json    # Talknut metadata
+         /page_1.json   # 10-20 posts per file
+         /page_2.json
+         /page_3.json
+         ...
+         /year/
+           /2025/
+             /index.json
+             /page_1.json
+             ...
+           /2024/
+             ...
+       /projectnut/
+         /index.json    # Projectnut metadata
+         /page_1.json   # 10-20 posts per file
+         ...
+       /photonut/
+         ...
+       /medianut/
+         ...
+       /analnut/
+         ...
+       /by_id/
+         /1000-1999/    # Group by ID ranges
+           /{id}.json   # Individual post data
+         /2000-2999/
+           /{id}.json
+         ...
+```
