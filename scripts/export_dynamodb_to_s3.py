@@ -4,9 +4,11 @@ import os
 from datetime import datetime
 
 class DynamoDBToStaticJSON:
-    def __init__(self, table_name, s3_bucket, export_base_path='data/posts'):
-        self.dynamodb = boto3.resource('dynamodb')
-        self.s3 = boto3.client('s3')
+    def __init__(self, table_name, s3_bucket, export_base_path='data/posts', 
+                 dynamodb_resource=None, s3_client=None):
+        # Allow passing custom boto3 resources for role assumption
+        self.dynamodb = dynamodb_resource or boto3.resource('dynamodb')
+        self.s3 = s3_client or boto3.client('s3')
         self.table = self.dynamodb.Table(table_name)
         self.s3_bucket = s3_bucket
         self.export_base_path = export_base_path
@@ -89,16 +91,55 @@ class DynamoDBToStaticJSON:
         }
         self.upload_to_s3(f'{self.export_base_path}/index.json', global_index)
 
+def assume_admin_role():
+    """Assume the admin export role for DynamoDB and S3 access"""
+    import boto3
+    import os
+    
+    # Role ARN should be passed as an environment variable
+    role_arn = os.environ.get('ADMIN_ROLE_ARN')
+    if not role_arn:
+        raise ValueError("ADMIN_ROLE_ARN environment variable must be set")
+    
+    sts_client = boto3.client('sts')
+    
+    # Assume the admin role
+    assumed_role = sts_client.assume_role(
+        RoleArn=role_arn,
+        RoleSessionName='DynamoDBToS3Export'
+    )
+    
+    # Return temporary credentials
+    return {
+        'aws_access_key_id': assumed_role['Credentials']['AccessKeyId'],
+        'aws_secret_access_key': assumed_role['Credentials']['SecretAccessKey'],
+        'aws_session_token': assumed_role['Credentials']['SessionToken']
+    }
+
 def main():
     # Use environment variables for configuration
     import os
+    import boto3
+    
+    # Assume admin role
+    admin_credentials = assume_admin_role()
+    
+    # Create boto3 session with assumed role credentials
+    session = boto3.Session(
+        aws_access_key_id=admin_credentials['aws_access_key_id'],
+        aws_secret_access_key=admin_credentials['aws_secret_access_key'],
+        aws_session_token=admin_credentials['aws_session_token']
+    )
     
     table_name = os.environ.get('DYNAMODB_TABLE', 'splaysh-items')
     s3_bucket = os.environ.get('S3_BUCKET', 'splaysh-static-data')
     
+    # Pass the session to the exporter
     exporter = DynamoDBToStaticJSON(
         table_name=table_name, 
-        s3_bucket=s3_bucket
+        s3_bucket=s3_bucket,
+        dynamodb_resource=session.resource('dynamodb'),
+        s3_client=session.client('s3')
     )
     exporter.export_all()
 
