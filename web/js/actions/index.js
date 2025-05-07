@@ -46,53 +46,36 @@ function receiveItems(result) {
     return action;
 }
 
-export function fetchItems(nutType='TALKNUT', lastEvaluatedKey) {
+export function fetchItems(nutType='TALKNUT', page=1) {
     nutType = nutType.toUpperCase();
     return function (dispatch) {
-
         dispatch(requestItems(nutType));
 
-        const readOnlyCredentials = new AWS.Credentials(
-            Config.aws.awsAccessKeyId,
-            Config.aws.awsSecretAccessKeyId,
-        );
+        // Construct S3 URL for the specific nut type and page
+        const nutTypeKey = nutType.toLowerCase().replace('nut', '');
+        const s3Url = `https://${Config.aws.staticDataBucket}.s3.amazonaws.com/data/posts/${nutTypeKey}/page_${page}.json`;
 
-        AWS.config.update({
-            region: Config.aws.region,
-            credentials: readOnlyCredentials
-        });
-
-        let params = {
-            TableName: Config.aws.itemsTableName,
-            Limit: Config.aws.itemsTableFetchLimit,
-            IndexName: Config.aws.itemsTableIsPublicIndex,
-            KeyConditionExpression: "#create <= :date and #ispublic = :publicval",
-            ExpressionAttributeNames:{
-                "#create": "create_date",
-                "#ispublic": "is_public"
-            },
-            ExpressionAttributeValues: {
-                ":date":moment(new Date()).utc().format("YYYY-MM-DD HH:mm:ss"),
-                ":publicval": 1
-            },
-            ScanIndexForward: false,
-        };
-
-        if(lastEvaluatedKey){
-            params.ExclusiveStartKey = lastEvaluatedKey;
-        }
-
-        const dynamoDb = new AWS.DynamoDB.DocumentClient();
-        const queryPromise = dynamoDb.query(params).promise();
-        queryPromise.then(result => {
-            console.log("dynamodb query succeeded.");
-            result['nut_type'] = nutType;
-            dispatch(receiveItems(result))
-        }).catch(err => {
-            // handle error
-            console.error('dynamodb query failed: ' + JSON.stringify(err));
-        });
-    }
+        fetch(s3Url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(items => {
+                dispatch(receiveItems({
+                    Items: items,
+                    nut_type: nutType
+                }));
+            })
+            .catch(error => {
+                console.error('Error fetching items:', error);
+                dispatch(receiveItems({
+                    Items: [],
+                    nut_type: nutType
+                }));
+            });
+    };
 }
 
 export function fetchItemsByNut(nutType='TALKNUT', lastEvaluatedKey) {

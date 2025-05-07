@@ -9,6 +9,7 @@ Parameters:
   EnvironmentTag:
     Type: String
     Description: Environment of the Stack
+    Default: dev
   DynamoDBTableSchema:
     Default: "arn:aws:dynamodb:us-east-1:796019718156:table/splayshdb"
     Description: "Base name of the DynamoDB Table"
@@ -31,3 +32,48 @@ Resources:
                 - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items"]]
                 - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items/index/item-nut-createdate"]]
                 - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items/index/item-ispublic-createdate"]]
+
+  SplayshAdminExportRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-admin-export-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: dynamodb-s3-export-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "dynamodb:Scan"
+                  - "dynamodb:Query"
+                  - "dynamodb:GetItem"
+                Resource:
+                  - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items"]]
+                  - !Join [".", [Ref: DynamoDBTableSchema, Ref: EnvironmentTag, "items/index/*"]]
+              - Effect: Allow
+                Action:
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                Resource:
+                  - !Sub "arn:aws:s3:::${StaticDataBucket}"
+                  - !Sub "arn:aws:s3:::${StaticDataBucket}/*"
+
+  StaticDataBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub "splaysh-static-data-${EnvironmentTag}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html

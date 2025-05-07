@@ -1,0 +1,80 @@
+name: Export DynamoDB to S3
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+
+permissions:
+  id-token: write   # This is required for OIDC authentication
+  contents: read    # This is required to checkout the repository
+
+jobs:
+  export-dynamodb-to-s3:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ vars.AWS_ADMIN_EXPORT_ROLE_ARN }}
+        aws-region: us-east-1  # Replace with your preferred region
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install boto3
+
+    - name: Export DynamoDB to S3
+      env:
+        DYNAMODB_TABLE: ${{ vars.DYNAMODB_TABLE }}
+        S3_BUCKET: ${{ vars.STATIC_DATA_S3_BUCKET }}
+      run: |
+        python scripts/export_dynamodb_to_s3.py
+
+    - name: Invalidate CloudFront Cache (Optional)
+      if: success()
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} \
+          --paths "/data/posts/*"
+
+    - name: Slack Notification on Failure
+      if: failure()
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        payload: |
+          {
+            "text": "❌ DynamoDB to S3 Export Failed for ${{ inputs.environment || 'dev' }} environment",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "GitHub Action export-dynamodb-to-s3 failed. Please check the workflow logs."
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
